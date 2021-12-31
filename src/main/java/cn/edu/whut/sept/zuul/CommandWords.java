@@ -1,7 +1,8 @@
 package cn.edu.whut.sept.zuul;
 
 /**
- * 该类用于存储游戏中可用的行为指令（go\quit\help。。。）
+ * 该类用于存储游戏中可用的行为指令（go\quit\help。。。）<br>
+ * 该类通过存储一个命令词汇字符串数组来定义游戏中所有有效的命令
  *@author txg
  *@version 创建时间：2021年12月31日 上午11:24:21
  */
