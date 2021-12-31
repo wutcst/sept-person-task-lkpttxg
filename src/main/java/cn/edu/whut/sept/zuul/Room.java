@@ -4,7 +4,8 @@ import java.util.Set;
 import java.util.HashMap;
 
 /**
- * <code>Room</code>类的对象表示一个房间对象，是游戏活动的主要区域
+ * <code>Room</code>类的对象表示一个房间对象，是游戏活动的主要区域。<br>
+ *  一个Room对象代表游戏中的一个位置。房间可以由出口通到其它房间。
  *@author txg
  *@version 创建时间：2021年12月31日 上午11:24:21
  */

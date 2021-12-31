@@ -2,7 +2,7 @@ package cn.edu.whut.sept.zuul;
 
 import java.util.Scanner;
 /**
- * 该类为语法分析器，从终端读入一行输入，将其解析为命令，并据此创建 Command 类对象。
+ * 该类为语法分析器，从终端读入一行输入，将其解析为命令，并据此创建 Command 类对象
  * @author txg
  * @version 创建时间：2021年12月31日 上午11:24:21
  */
