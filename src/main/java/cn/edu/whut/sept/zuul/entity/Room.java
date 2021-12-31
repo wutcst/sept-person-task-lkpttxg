@@ -62,8 +62,9 @@ public class Room
      * @return 物品们的描述信息
      */
     public String getItemsDescription(){
-        if(items.isEmpty())
+        if(items.isEmpty()){
             return "这个房间啥都没有"+'\n';
+        }
         StringBuilder s = new StringBuilder("");
         for(Item item:items){
             s.append(item.getDescription()+"\t"+item.getWeight()+"kg"+"\n");
@@ -110,8 +111,9 @@ public class Room
      * @return 存在则返回 true,否则返回 false
      */
     public boolean hasExit(String description){
-        if(exits.containsKey(description))
+        if(exits.containsKey(description)) {
             return true;
+        }
         return false;
     }
 }

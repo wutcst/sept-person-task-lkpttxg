@@ -74,7 +74,7 @@ classDiagram
     Parser-->CommandWords
 
 ```
-### 2.标注样例工程的代码<span id=2/>
+### 2.标注样例工程的代码(注释的风格检验放入的第三部分)<span id=2/>
 &emsp;需要注意的几点问题：
 - 类上的注释：描述类的作用，版本和作者信息
 
@@ -262,6 +262,40 @@ private boolean processCommand(Command command)
     }
 ```
 &emsp;可以发现，通过表驱动的方法修改 if-else 语句，可以使 Game 游戏本体中的代码不会在扩展功能后出现膨胀臃肿的情况，且我们的业务方法与主体进行了分离，即使以后增加了新的方法，Game 中的 processCommand 方法不需要任何修改。
+####&emsp;3.3 代码质量分析和规范检查
+&emsp;**(1)质量分析工具：Alibaba Java Coding Guidelines**
+&emsp;&emsp;这个插件可在 IDEA 插件商店中下载，下载重启 IDEA 后，右击项目名后选择“编码规约扫描”即可对整个项目进行扫描。扫描结束后，通常有3中结果，blocker、critical、major。其中 blocker 会在项目中报红色，必须进行修改。而 critical 和 major 是程度比较低的代码质量隐患。
+
+**&emsp;修改过的 blocker 问题:**
+- 在 if 选择语句中，即使只有一句表达式，也必须使用大括号,如下所示：
+```java
+ public boolean hasExit(String description){
+        if(exits.containsKey(description)) {
+            return true;
+        }
+        return false;
+    }
+```
+- 重写的方法，必须要添加 @Overried
+```java
+    @Override
+    public String toString(){
+        return commandString;
+    }
+```
+**&emsp;存在的 cirtical 问题:**
+- 新建引用类型必须重写 hasCode 和 equals 方法
+
+**&emsp;存在的 major 问题:**
+- 不允许任何魔法值直接出现在代码中
+- 及时清理不再使用的代码段和配置信息
+- 方法内部的单行注释，应放在另起一行放在被注释语句上方。方法内部多行注释使用/* */注释。注意与代码对齐
+
+&emsp;**(2)风格检查工具：CheckStyle**
+&emsp;&emsp;这个插件可在 IDEA 插件商店中下载，用于对代码风格进行检测。对本次样例工程，使用的是 Google 规范的风格检查。
+&emsp;&emsp;样例工程中主要修改的是注释的规范，其中最多出现的问题是：
+- 注释内容完成后要有结尾符号
+- @后面的内容前面要有空行
 
 ### 4.功能扩充点(具体实验截图位于实践报告中)<span id=4/>
 #### &emsp;4.1 房间中增加物体+look指令
@@ -378,6 +412,8 @@ if (nextRoom == null) {
 - 当进入了其它房间后，输入单独的一个 back ，正确的回到上一个房间
 - 当进入了其它房间后，输入 back 后仍跟其它符号，仍识别 back 回到上一个房间
 - 当多次 go ,又回到 起点 时，这时起点也会有一个 back ，使用 back 指令可以回到上一个房间
+
+#### &emsp;4.3 更高级的 back ,可多次回退，直至回到终点
 
 ### 5.编写测试用例<span id=5/>
 

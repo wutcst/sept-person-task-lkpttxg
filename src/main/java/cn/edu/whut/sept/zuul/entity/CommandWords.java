@@ -39,8 +39,9 @@ public class CommandWords
     {
         //循环检测
         for(String s: validCommands.keySet()){
-            if(s.equals(aString))
+            if(s.equals(aString)){
                 return true;
+            }
         }
       /*  for(int i = 0; i < validCommands.length; i++) {
             if(validCommands[i].equals(aString))
@@ -55,8 +56,9 @@ public class CommandWords
      * @return 返回其对应的枚举类型
      */
     public CommandWord getCommandWord(String word){
-        if(validCommands.containsKey(word))
+        if(validCommands.containsKey(word)) {
             return validCommands.get(word);
+        }
         return null;
     }
     /**
@@ -67,9 +69,6 @@ public class CommandWords
         for(String s: validCommands.keySet()){
             System.out.println(s+"");
         }
-       /* for(String command: validCommands) {
-            System.out.print(command + "  ");
-        }*/
         System.out.println();
     }
 }
