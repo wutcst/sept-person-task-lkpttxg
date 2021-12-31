@@ -54,7 +54,21 @@ public class Room
      */
     public String getLongDescription()
     {
-        return "You are " + description + ".\n" + getExitString();
+        return "You are " + description + ".\n" + getItemsDescription()+getExitString();
+    }
+
+    /**
+     * 获取所有物品的描述信息
+     * @return 物品们的描述信息
+     */
+    public String getItemsDescription(){
+        if(items.isEmpty())
+            return "这个房间啥都没有"+'\n';
+        StringBuilder s = new StringBuilder("");
+        for(Item item:items){
+            s.append(item.getDescription()+"\t"+item.getWeight()+"kg"+"\n");
+        }
+        return "仔细观察这个房间:\n"+s.toString();
     }
 
     /**
@@ -80,6 +94,14 @@ public class Room
     public Room getExit(String direction)
     {
         return exits.get(direction);
+    }
+
+    /**
+     * 向房间中增加一个物品
+     * @param item 物品对象
+     */
+    public void addItem(Item item){
+        items.add(item);
     }
 }
 

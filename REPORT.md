@@ -265,6 +265,77 @@ private boolean processCommand(Command command)
 
 ### 4.功能扩充点<span id=4/>
 #### &emsp;4.1 房间中增加物体+look指令
+&emsp;&emsp;(1)在 entity 包中新加一个类 Item ，表示物体类。Item 与 Room 是关联关系，且是 Room 单向关联 Item。 Item 具体属性与构造方法如下：
+```java
+ private String description;
+    private float weight;
+
+    /**
+     * 构造方法，对物体对象初始化
+     * @param description 物体的描述
+     * @param weight 物体的重量
+     */
+    public Item(String description, float weight) {
+        this.description = description;
+        this.weight = weight;
+    }
+```
+&emsp;&emsp;(2)上述单独创建 Item 类，是遵循了类的内聚原则，即类必须表示的是一个单独的、定义明确的实体。当在 Room 房间中存在物体时，物体的存储目前选择的是 HashSet 集合，方便对房间中的物体进行操作。
+```java
+private String description;
+    /**
+     * 用 HashMap 存放了一个房间的各种出口与其对应房间的 key-value 值
+     */
+    private HashMap<String, Room> exits;
+    private HashSet<Item> items;
+
+    /**
+     * 构造方法，初始化房间的描述和<code>HashMap</code>容器
+     * @param description 对房间的描述
+     */
+    public Room(String description)
+    {
+        this.description = description;
+        exits = new HashMap<>();
+        items = new HashSet<>();
+    }
+```
+&emsp;&emsp;(3) look 指令的实现。因为前面对 if-else 进行了优化，且生成了命令字段的枚举类型，所以我们可以很方便的添加 look 指令和在表驱动中添加对应的服务。不过我们先展示 look 的具体功能，即描述当前房间信息+物品信息：
+```java
+ public String getLongDescription()
+    {
+        return "You are " + description + ".\n" + getItemsDescription()+getExitString();
+    }
+
+    /**
+     * 获取所有物品的描述信息
+     * @return 物品们的描述信息
+     */
+    public String getItemsDescription(){
+        if(items.isEmpty())
+            return "这个房间啥都没有"+'\n';
+        StringBuilder s = new StringBuilder("");
+        for(Item item:items){
+            s.append(item.getDescription()+"\t"+item.getWeight()+"kg"+"\n");
+        }
+        return "仔细观察这个房间:\n"+s.toString();
+    }
+```
+&emsp;&emsp;(4)然后是在表枚举类型中加入 LOOK 类型，并且将其对应的服务加入 表驱动类中就完成了任务。其余类中不需要修改什么代码。
+```java
+//将命令字符串与枚举类型关联起来
+    GO("go"),QUIT("quit"),
+    HELP("help"),Look("look"),
+    UNKNOWN("?");
+```
+```java
+    table.put(CommandWord.Look,command -> {
+        System.out.println(game.getCurrentRoom().getLongDescription());return false;});
+}
+```
+#### &emsp;4.2 实现 back 指令，将玩家带回上一个场景
+
+
 ### 5.编写测试用例<span id=5/>
 
 

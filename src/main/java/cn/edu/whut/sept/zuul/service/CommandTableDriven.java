@@ -18,8 +18,8 @@ public class CommandTableDriven {
     /**
      * 每个指令对应的函数存储到 map 中,形成表驱动结构
      */
-    private HashMap<CommandWord, Function<Command,Boolean>> table;
-    private Game game;
+    private final HashMap<CommandWord, Function<Command,Boolean>> table;
+    private final Game game;
 
     /**
      * 当表驱动对象初始化后，将<code>Game</code>中的处理业务进行一一对应，其函数的注册是用的lambda表达式<br>
@@ -69,6 +69,8 @@ public class CommandTableDriven {
                 return true;  // signal that we want to quit
             }
         });
+        table.put(CommandWord.Look,command -> {
+            System.out.println(game.getCurrentRoom().getLongDescription());return false;});
     }
 
     /**
@@ -78,4 +80,5 @@ public class CommandTableDriven {
     public HashMap<CommandWord, Function<Command,Boolean>> getTable() {
         return table;
     }
+
 }

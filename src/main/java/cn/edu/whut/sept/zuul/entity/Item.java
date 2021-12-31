@@ -26,7 +26,10 @@ public class Item {
     public String getDescription(){
         return this.description;
     }
-
+    /**
+     * setter方法，获得物体的重量
+     * @return
+     */
     public float getWeight() {
         return weight;
     }
