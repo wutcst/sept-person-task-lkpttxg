@@ -7,15 +7,17 @@ package cn.edu.whut.sept.zuul;
  */
 public class Command
 {
-    private String commandWord;
+    private CommandWord commandWord;
     private String secondWord;
+    /*private String commandWord;
+    private String secondWord;*/
 
     /**
      * Command的构造方法，用于生成一个游戏指令对象，由解析器<code>Parser</code>间接调用
      * @param firstWord 指令的第一个单词字段
      * @param secondWord 指令的第二个单词字段
      */
-    public Command(String firstWord, String secondWord)
+    public Command(CommandWord firstWord, String secondWord)
     {
         commandWord = firstWord;
         this.secondWord = secondWord;
@@ -25,7 +27,7 @@ public class Command
      * getter方法，用于获得第一个字段的内容，在游戏中用为行为控制
      * @return 返回第一个字段的内容
      */
-    public String getCommandWord()
+    public CommandWord getCommandWord()
     {
         return commandWord;
     }

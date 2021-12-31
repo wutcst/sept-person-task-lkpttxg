@@ -82,7 +82,49 @@ classDiagram
 
 - 字段上的注释：多对复合字段的作用进行解释，以及用@see描述其相关方法
 ### 3.扩充和维护样例工程<span id=3/>
-#### 3.1 问题1 ：代码重复
+####&emsp; 进行语言无关的重构
+#####&emsp;3.1 隐形耦合
+&emsp;zuul游戏的用户界面是与英语的命令紧密绑定在一起的。假如希望改变界面使玩家可以使用其它语言，就需要找到源代码中所有命令字出现的地方，并加以修改，这是**隐形耦合**。
+&emsp;(1) 额外添加一个枚举类型CommandWord,来解决以上问题：
+```java
+/**
+ * 包含了游戏中所有的命令关键字
+ * @author txg
+ * @version 2021.12.21
+ */
+public enum CommandWord {
+    Go,Quit,HELP,UNKNOWN;
+}
+```
+&emsp;(2) 将 CommandWords 中存储命令字的数组改为 HashMap<String,CommandWord> 集合,通过字符串和 CommandWord 对象之间的映射来定义有效的命令而不是使用字符串数据来定义。
+```java
+/**
+     * 构造方法，生成指令组对象
+     */
+    public CommandWords()
+    {
+        validCommands=new HashMap<>();
+        //从枚举类型中获取命令
+        validCommands.put("go",CommandWord.GO);
+        validCommands.put("help",CommandWord.HELP);
+        validCommands.put("quit",CommandWord.QUIT);
+    }
+```
+&emsp;(3) 根据上一步，可以初步修改游戏的processCommand,使if选择语句中比较的commandWord类似不是String而是CommandWord枚举类型，可改写为如下：
+```java
+ CommandWord commandWord = command.getCommandWord();
+        if (commandWord==CommandWord.HELP) {
+            printHelp();
+        }
+        else if (commandWord==CommandWord.GO) {
+            goRoom(command);
+        }
+        else if (commandWord==CommandWord.QUIT) {
+            wantToQuit = quit(command);
+        }
+```
+
+
 ### 4.功能扩充点<span id=4/>
 ### 5.编写测试用例<span id=5/>
 

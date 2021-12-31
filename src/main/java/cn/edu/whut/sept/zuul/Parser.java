@@ -43,7 +43,7 @@ public class Parser
         }
         //判断是否有行为控制指令，执行不同的返回操作
         if(commands.isCommand(word1)) {
-            return new Command(word1, word2);
+            return new Command(commands.getCommandWord(word1), word2);
         }
         else {
             return new Command(null, word2);
