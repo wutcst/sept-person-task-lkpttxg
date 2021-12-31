@@ -123,8 +123,42 @@ public enum CommandWord {
             wantToQuit = quit(command);
         }
 ```
+&emsp;(4) 使命令界面进一步解耦合，每当引入一个新的命令时，把用户输入文本与值的关联从CommandWords转移到CommandWord。具体修改的枚举类型如下：
+```java
+ //将命令字符串与枚举类型关联起来
+    GO("go"),QUIT("quit"),HELP("help"),UNKNOWN("?");
 
+    private String commandString;
 
+    /**
+     * 拥有命令字符串属性的的枚举类型
+     * @param commandString 命令字符串
+     */
+    CommandWord(String commandString){
+        this.commandString=commandString;
+    }
+
+    /**
+     * 重写 toString() 方法，返回枚举类型代表的命令字符串
+     * @return 返回对应的命令字符串
+     */
+    public String toString(){
+        return commandString;
+    }
+```
+&emsp;(5) 在第(4)步关联的基础上，修改 CommandWords 的初始化构成，使其直接从枚举中初始化所有指令。
+```java
+ public CommandWords()
+    {
+        validCommands=new HashMap<>();
+        //从枚举类型中获取命令
+       for(CommandWord commandWord:CommandWord.values()){
+           if(commandWord!=CommandWord.UNKNOWN){
+               validCommands.put(commandWord.toString(),commandWord);
+           }
+       }
+    }
+```
 ### 4.功能扩充点<span id=4/>
 ### 5.编写测试用例<span id=5/>
 

@@ -22,9 +22,11 @@ public class CommandWords
     {
         validCommands=new HashMap<>();
         //从枚举类型中获取命令
-        validCommands.put("go",CommandWord.GO);
-        validCommands.put("help",CommandWord.HELP);
-        validCommands.put("quit",CommandWord.QUIT);
+       for(CommandWord commandWord:CommandWord.values()){
+           if(commandWord!=CommandWord.UNKNOWN){
+               validCommands.put(commandWord.toString(),commandWord);
+           }
+       }
     }
 
     /**
