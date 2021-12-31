@@ -46,9 +46,11 @@ public class Game
      * 创建游戏并初始化内部数据和解析器
      */
     public Game()
-    {
+    {   //创建所有房间
         createRooms();
+        //初始化解析器
         parser = new Parser();
+        //表驱动
         commandTableDriven=new CommandTableDriven(this);
     }
 
@@ -150,7 +152,7 @@ public class Game
      * 执行help指令，在终端打印游戏帮助信息.
      * 此处会输出游戏中用户可以输入的命令列表
      */
-    private void printHelp()
+   /* private void printHelp()
     {
         System.out.println("You are lost. You are alone. You wander");
         System.out.println("around at the university.");
@@ -159,10 +161,10 @@ public class Game
         parser.showCommands();
     }
 
-    /**
+    *//**
      * 执行go指令，向房间的指定方向出口移动，如果该出口连接了另一个房间，则会进入该房间，
      * 否则打印输出错误提示信息.
-     */
+     *//*
     private void goRoom(Command command)
     {
         if(!command.hasSecondWord()) {
@@ -185,10 +187,10 @@ public class Game
         }
     }
 
-    /**
+    *//**
      * 执行Quit指令，用户退出游戏。如果用户在命令中输入了其他参数，则进一步询问用户是否真的退出.
      * @return 如果游戏需要退出则返回true，否则返回false.
-     */
+     *//*
     private boolean quit(Command command)
     {
         if(command.hasSecondWord()) {
@@ -198,7 +200,7 @@ public class Game
         else {
             return true;  // signal that we want to quit
         }
-    }
+    }*/
 
     public Parser getParser() {
         return parser;

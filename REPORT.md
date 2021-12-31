@@ -264,6 +264,7 @@ private boolean processCommand(Command command)
 &emsp;可以发现，通过表驱动的方法修改 if-else 语句，可以使 Game 游戏本体中的代码不会在扩展功能后出现膨胀臃肿的情况，且我们的业务方法与主体进行了分离，即使以后增加了新的方法，Game 中的 processCommand 方法不需要任何修改。
 
 ### 4.功能扩充点<span id=4/>
+#### &emsp;4.1 房间中增加物体+look指令
 ### 5.编写测试用例<span id=5/>
 
 

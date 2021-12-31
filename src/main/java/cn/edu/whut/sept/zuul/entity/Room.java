@@ -1,5 +1,6 @@
 package cn.edu.whut.sept.zuul.entity;
 
+import java.util.HashSet;
 import java.util.Set;
 import java.util.HashMap;
 
@@ -16,6 +17,7 @@ public class Room
      * 用 HashMap 存放了一个房间的各种出口与其对应房间的 key-value 值
      */
     private HashMap<String, Room> exits;
+    private HashSet<Item> items;
 
     /**
      * 构造方法，初始化房间的描述和<code>HashMap</code>容器
@@ -25,6 +27,7 @@ public class Room
     {
         this.description = description;
         exits = new HashMap<>();
+        items = new HashSet<>();
     }
 
     /**
