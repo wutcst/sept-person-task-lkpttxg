@@ -13,9 +13,23 @@
  */
 package cn.edu.whut.sept.zuul;
 
+/**
+ * 该类是游戏的主体。它启动游戏，然后进入一个不断读取和执行输入的命令的循环。<br>
+ * 它也包括执行每一个用户命令的代码。
+ * @author txg
+ * @version 创建时间：2021年12月31日 上午11:24:21
+ */
 public class Game
 {
+    /**
+     * 游戏指令解析器，<code>Game</code>创建后直接生成。<br>
+     * 通过指令解析器，我们获得用户输入的指令。
+     * @see Parser#getCommand()
+     */
     private Parser parser;
+    /**
+     * 在游戏主体中，currentRoom表示用户所在的当前房间。
+     */
     private Room currentRoom;
 
     /**
