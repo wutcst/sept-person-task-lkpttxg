@@ -1,5 +1,7 @@
 package cn.edu.whut.sept.zuul;
 
+import cn.edu.whut.sept.zuul.moudle.Game;
+
 /**
  * 该类的主方法为程序入口，没有什么其它功能。
  * @author txg

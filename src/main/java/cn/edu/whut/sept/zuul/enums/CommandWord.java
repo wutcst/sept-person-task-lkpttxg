@@ -1,4 +1,4 @@
-package cn.edu.whut.sept.zuul;
+package cn.edu.whut.sept.zuul.enums;
 
 /**
  * 包含了游戏中所有的命令关键字

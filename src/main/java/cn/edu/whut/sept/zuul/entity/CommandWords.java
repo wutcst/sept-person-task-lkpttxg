@@ -1,4 +1,6 @@
-package cn.edu.whut.sept.zuul;
+package cn.edu.whut.sept.zuul.entity;
+
+import cn.edu.whut.sept.zuul.enums.CommandWord;
 
 import java.util.HashMap;
 
@@ -10,11 +12,10 @@ import java.util.HashMap;
  */
 public class CommandWords
 {
-    private HashMap<String,CommandWord> validCommands;
+    private HashMap<String, CommandWord> validCommands;
    /* private static final String[] validCommands = {
             "go", "quit", "help"
     };*/
-
     /**
      * 构造方法，生成指令组对象
      */

@@ -11,7 +11,13 @@
  * @author  Michael Kölling and David J. Barnes
  * @version 1.0
  */
-package cn.edu.whut.sept.zuul;
+package cn.edu.whut.sept.zuul.moudle;
+
+import cn.edu.whut.sept.zuul.service.CommandTableDriven;
+import cn.edu.whut.sept.zuul.entity.Command;
+import cn.edu.whut.sept.zuul.entity.Room;
+import cn.edu.whut.sept.zuul.enums.CommandWord;
+import cn.edu.whut.sept.zuul.controller.Parser;
 
 /**
  * 该类是游戏的主体。它启动游戏，然后进入一个不断读取和执行输入的命令的循环.<br>
@@ -31,6 +37,10 @@ public class Game
      * 在游戏主体中，currentRoom表示用户所在的当前房间。
      */
     private Room currentRoom;
+    /**
+     * 表驱动类的实例对象，方便服务进行
+     */
+    private CommandTableDriven commandTableDriven;
 
     /**
      * 创建游戏并初始化内部数据和解析器
@@ -39,6 +49,7 @@ public class Game
     {
         createRooms();
         parser = new Parser();
+        commandTableDriven=new CommandTableDriven(this);
     }
 
     /**
@@ -109,16 +120,15 @@ public class Game
      * @return 如果执行的是游戏结束指令，则返回true，否则返回false.
      */
     private boolean processCommand(Command command)
-    {
-        boolean wantToQuit = false;
+    {  boolean wantToQuit = false;
 
-        if(command.isUnknown()) {
+       if(command.isUnknown()) {
             System.out.println("I don't know what you mean...");
             return false;
         }
-
+        //获取命令枚举类型
         CommandWord commandWord = command.getCommandWord();
-        if (commandWord==CommandWord.HELP) {
+       /* if (commandWord==CommandWord.HELP) {
             printHelp();
         }
         else if (commandWord==CommandWord.GO) {
@@ -126,9 +136,12 @@ public class Game
         }
         else if (commandWord==CommandWord.QUIT) {
             wantToQuit = quit(command);
-        }
+        }*/
+        //获取驱动表，执行该命令对应的函数，返回值赋予 wantToQuit
+        wantToQuit=commandTableDriven.getTable().get(commandWord).apply(command);
         // else command not recognised.
         return wantToQuit;
+
     }
 
     // implementations of user commands:
@@ -185,5 +198,17 @@ public class Game
         else {
             return true;  // signal that we want to quit
         }
+    }
+
+    public Parser getParser() {
+        return parser;
+    }
+
+    public Room getCurrentRoom() {
+        return currentRoom;
+    }
+
+    public void setCurrentRoom(Room currentRoom) {
+        this.currentRoom = currentRoom;
     }
 }

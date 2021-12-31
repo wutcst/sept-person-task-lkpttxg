@@ -1,4 +1,4 @@
-package cn.edu.whut.sept.zuul;
+package cn.edu.whut.sept.zuul.entity;
 
 import java.util.Set;
 import java.util.HashMap;

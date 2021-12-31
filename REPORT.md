@@ -2,10 +2,10 @@
 
 #### [目录]()
 #### [1.阅读和描述样例工程](#1)
-##### [&emsp;1.1 理解与描述样例工程功能]()
-##### [&emsp;1.2 UML类图描述代码结构组成]()
-#### [2.标注样例工程的代码](#2)
-#### [3.扩充和维护样例工程](#3)
+##### [&emsp;1.1 理解与描述样例工程功能](#2)
+##### [&emsp;1.2 UML类图描述代码结构组成](#3)
+#### [2.标注样例工程的代码](#4)
+#### [3.扩充和维护样例工程](#5)
 #### [4.功能扩充点](#4)
 #### [5.编写测试用例](#5)
 <hr>
@@ -82,8 +82,7 @@ classDiagram
 
 - 字段上的注释：多对复合字段的作用进行解释，以及用@see描述其相关方法
 ### 3.扩充和维护样例工程<span id=3/>
-####&emsp; 进行语言无关的重构
-#####&emsp;3.1 隐形耦合
+####&emsp;3.1 解决隐形耦合
 &emsp;zuul游戏的用户界面是与英语的命令紧密绑定在一起的。假如希望改变界面使玩家可以使用其它语言，就需要找到源代码中所有命令字出现的地方，并加以修改，这是**隐形耦合**。
 &emsp;(1) 额外添加一个枚举类型CommandWord,来解决以上问题：
 ```java
@@ -159,6 +158,111 @@ public enum CommandWord {
        }
     }
 ```
+####&emsp;3.2 利用表驱动优化 if-else 语句
+&emsp;(1) 由于每添加一个新的命令时，就得在一堆 if 语句中再加入一个分支，会导致代码膨胀臃肿，所以在上面用枚举类型解决完隐形耦合后，采取表驱动的方法进行优化。
+```java
+/**
+ * 该类执行表驱动的作用，从而优化if-else结构<br>
+ *
+ * @author txg
+ * @version 2021.12.31
+ */
+public class CommandTableDriven {
+    /**
+     * 每个指令对应的函数存储到 map 中,形成表驱动结构
+     */
+    private HashMap<CommandWord, Function<Command,Boolean>> table;
+    private Game game;
+
+    /**
+     * 当表驱动对象初始化后，将<code>Game</code>中的处理业务进行一一对应，其函数的注册是用的lambda表达式<br>
+     * 值得提醒的是：lambda 表达式中 Function 的传入参数为 Command 对象 ,返回参数为 Boolean。这是因为，通过发现，
+     * 无论是已有功能还是扩展功能，我们对其的执行的服务的输入最多只有一个 Command 类型，输出最多为 Boolean 类型判断是否
+     * 退出游戏。
+     * @param game 游戏主体
+     */
+    public CommandTableDriven(Game game){
+        this.game=game;
+        table=new HashMap<>();
+        //对每个命令，注册对应的函数
+        table.put(CommandWord.GO,(command)->{...});
+        table.put(CommandWord.HELP,(command)->{...});
+        table.put(CommandWord.QUIT,command -> {... });
+    }
+
+    /**
+     * 向<code>Game</code>对象中返回 map 的表驱动集合
+     * @return 返回表驱动集合
+     */
+    public HashMap<CommandWord, Function<Command,Boolean>> getTable() {
+        return table;
+    }
+}
+```
+&emsp;(2) 创建好表驱动类时，我们在 Game 类中需要实例化它，或者是增加其为 Game 类的属性，在游戏一开始时，就进行初始化。
+```java
+  /**
+     * 表驱动类的实例对象，方便服务进行
+     */
+    private CommandTableDriven commandTableDriven;
+
+    /**
+     * 创建游戏并初始化内部数据和解析器
+     */
+    public Game()
+    {
+        createRooms();
+        parser = new Parser();
+        commandTableDriven=new CommandTableDriven(this);
+    }
+```
+&emsp;(3) 最后将其运用到 parseCommand 方法中，处理命令的服务，以下展示改善前后的对比：
+
+**改善前**
+```java
+ private boolean processCommand(Command command)
+    {  boolean wantToQuit = false;
+
+       if(command.isUnknown()) {
+            System.out.println("I don't know what you mean...");
+            return false;
+        }
+        //获取命令枚举类型
+        CommandWord commandWord = command.getCommandWord();
+        if (commandWord==CommandWord.HELP) {
+            printHelp();
+        }
+        else if (commandWord==CommandWord.GO) {
+            goRoom(command);
+        }
+        else if (commandWord==CommandWord.QUIT) {
+            wantToQuit = quit(command);
+        }
+        
+        // else command not recognised.
+        return wantToQuit;
+         
+    }
+```
+**改善后**
+```java
+private boolean processCommand(Command command)
+    {  boolean wantToQuit = false;
+
+       if(command.isUnknown()) {
+            System.out.println("I don't know what you mean...");
+            return false;
+        }
+        //获取命令枚举类型
+        CommandWord commandWord = command.getCommandWord();
+        //获取驱动表，执行该命令对应的函数，返回值赋予 wantToQuit
+        wantToQuit=commandTableDriven.getTable().get(commandWord).apply(command);
+        // else command not recognised.
+        return wantToQuit;
+    }
+```
+&emsp;可以发现，通过表驱动的方法修改 if-else 语句，可以使 Game 游戏本体中的代码不会在扩展功能后出现膨胀臃肿的情况，且我们的业务方法与主体进行了分离，即使以后增加了新的方法，Game 中的 processCommand 方法不需要任何修改。
+
 ### 4.功能扩充点<span id=4/>
 ### 5.编写测试用例<span id=5/>
 

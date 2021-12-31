@@ -1,4 +1,6 @@
-package cn.edu.whut.sept.zuul;
+package cn.edu.whut.sept.zuul.entity;
+
+import cn.edu.whut.sept.zuul.enums.CommandWord;
 
 /**
  * 一个 Commmad 对象代表了用户输入的命令，它有一些方法可以很容易地判断是否是游戏的命令，还可以将命令中的第一个和第二个单词分离开来

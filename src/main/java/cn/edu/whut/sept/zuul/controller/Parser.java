@@ -1,4 +1,7 @@
-package cn.edu.whut.sept.zuul;
+package cn.edu.whut.sept.zuul.controller;
+
+import cn.edu.whut.sept.zuul.entity.CommandWords;
+import cn.edu.whut.sept.zuul.entity.Command;
 
 import java.util.Scanner;
 /**
