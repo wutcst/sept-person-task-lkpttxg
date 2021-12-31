@@ -103,6 +103,17 @@ public class Room
     public void addItem(Item item){
         items.add(item);
     }
+
+    /**
+     * 判断是否存在某个出口
+     * @param description 出口名
+     * @return 存在则返回 true,否则返回 false
+     */
+    public boolean hasExit(String description){
+        if(exits.containsKey(description))
+            return true;
+        return false;
+    }
 }
 
 

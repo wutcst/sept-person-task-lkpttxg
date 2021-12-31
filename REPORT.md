@@ -263,7 +263,7 @@ private boolean processCommand(Command command)
 ```
 &emsp;可以发现，通过表驱动的方法修改 if-else 语句，可以使 Game 游戏本体中的代码不会在扩展功能后出现膨胀臃肿的情况，且我们的业务方法与主体进行了分离，即使以后增加了新的方法，Game 中的 processCommand 方法不需要任何修改。
 
-### 4.功能扩充点<span id=4/>
+### 4.功能扩充点(具体实验截图位于实践报告中)<span id=4/>
 #### &emsp;4.1 房间中增加物体+look指令
 &emsp;&emsp;(1)在 entity 包中新加一个类 Item ，表示物体类。Item 与 Room 是关联关系，且是 Room 单向关联 Item。 Item 具体属性与构造方法如下：
 ```java
@@ -333,8 +333,51 @@ private String description;
         System.out.println(game.getCurrentRoom().getLongDescription());return false;});
 }
 ```
+&emsp;&emsp;(5)当用户在控制台输入 look 后，即显示用户所在房间的详细信息以及该房间的所有物品信息和出口信息。
 #### &emsp;4.2 实现 back 指令，将玩家带回上一个场景
-
+&emsp;&emsp;(1) 按照需求，back 指令将玩家带回上一个场景。所以我的想法是在用户执行 go 命令成功进入下一个房间之前，将本房间作为下一个房间的一个出口，出口名叫 “back”。此处代码更改只涉及表驱动类 CommandTableDriven ：
+```java
+if (nextRoom == null) {
+                System.out.println("There is no door!");
+            }
+            else {
+                //在进去下一个房间前，将这个房间的信息给back,则可以通过back返回上一个房间
+                nextRoom.setExit("back",game.getCurrentRoom());
+                game.setCurrentRoom(nextRoom);
+                System.out.println(game.getCurrentRoom().getLongDescription());
+            }
+```
+&emsp;&emsp;(2)在 Room 方法中额外添加一个方法，用于返回某个出口是否存在，以便于之后判断是否有房间无上一个房间的记录(即起点)。
+```java
+/**
+     * 判断是否存在某个出口
+     * @param description 出口名
+     * @return 存在则返回 true,否则返回 false
+     */
+    public boolean hasExit(String description){
+        if(exits.containsKey(description))
+            return true;
+        return false;
+    }
+```
+&emsp;&emsp;(3)在表驱动 Map 中添加 back 对应的功能实现的函数，具体实现如下：
+```java
+ // back 指令对应的功能，回退到上一个房间
+        table.put(CommandWord.BACK,command -> {
+            if(game.getCurrentRoom().hasExit("back")){
+                command.setSecondWord("back");
+                table.get(CommandWord.GO).apply(command);
+            }else {
+                System.out.println("这已经是起点...");
+            }
+            return false;
+        });
+```
+&emsp;&emsp;(4)该功能的检验如下：
+- 当用户一开始就输入 back 时，控制台输出 “这已经是起点...” ，表示起点无上一个房间
+- 当进入了其它房间后，输入单独的一个 back ，正确的回到上一个房间
+- 当进入了其它房间后，输入 back 后仍跟其它符号，仍识别 back 回到上一个房间
+- 当多次 go ,又回到 起点 时，这时起点也会有一个 back ，使用 back 指令可以回到上一个房间
 
 ### 5.编写测试用例<span id=5/>
 

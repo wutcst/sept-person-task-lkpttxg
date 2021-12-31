@@ -8,7 +8,7 @@ package cn.edu.whut.sept.zuul.enums;
 public enum CommandWord {
     //将命令字符串与枚举类型关联起来
     GO("go"),QUIT("quit"),
-    HELP("help"),Look("look"),
+    HELP("help"),LOOK("look"),
     BACK("back"),UNKNOWN("?");
 
     private String commandString;

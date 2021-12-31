@@ -29,9 +29,12 @@ public class CommandTableDriven {
      * @param game 游戏主体
      */
     public CommandTableDriven(Game game){
+        //初始化 game
         this.game=game;
+        //初始化驱动表
         table=new HashMap<>();
-        //对每个命令，注册对应的函数
+
+        // go 指令所对应的功能，进入下一个房间
         table.put(CommandWord.GO,(command)->{
             if(!command.hasSecondWord()) {
                 // if there is no second word, we don't know where to go...
@@ -48,11 +51,15 @@ public class CommandTableDriven {
                 System.out.println("There is no door!");
             }
             else {
+                //在进去下一个房间前，将这个房间的信息给back,则可以通过back返回上一个房间
+                nextRoom.setExit("back",game.getCurrentRoom());
                 game.setCurrentRoom(nextRoom);
                 System.out.println(game.getCurrentRoom().getLongDescription());
             }
             return false;
         });
+
+        // help 指令所对应的功能，打印所有的指令信息
         table.put(CommandWord.HELP,(command)->{
             System.out.println("You are lost. You are alone. You wander");
             System.out.println("around at the university.");
@@ -60,6 +67,8 @@ public class CommandTableDriven {
             System.out.println("Your command words are:");
             game.getParser().showCommands();
             return false;});
+
+        // quit 指令所对应的功能，退出游戏
         table.put(CommandWord.QUIT,command -> {
             if(command.hasSecondWord()) {
                 System.out.println("Quit what?");
@@ -69,8 +78,21 @@ public class CommandTableDriven {
                 return true;  // signal that we want to quit
             }
         });
-        table.put(CommandWord.Look,command -> {
+
+        // look 指令对应的功能，查看房间信息
+        table.put(CommandWord.LOOK,command -> {
             System.out.println(game.getCurrentRoom().getLongDescription());return false;});
+
+        // back 指令对应的功能，回退到上一个房间
+        table.put(CommandWord.BACK,command -> {
+            if(game.getCurrentRoom().hasExit("back")){
+                command.setSecondWord("back");
+                table.get(CommandWord.GO).apply(command);
+            }else {
+                System.out.println("这已经是起点...");
+            }
+            return false;
+        });
     }
 
     /**
