@@ -2,10 +2,8 @@
 
 #### [目录]()
 #### [1.阅读和描述样例工程](#1)
-#### [&emsp;1.1 理解与描述样例工程功能](#2)
-#### [&emsp;1.2 UML类图描述代码结构组成](#3)
-#### [2.标注样例工程的代码](#4)
-#### [3.扩充和维护样例工程](#5)
+#### [2.标注样例工程的代码](#2)
+#### [3.扩充和维护样例工程](#3)
 #### [4.功能扩充点](#4)
 #### [5.编写测试用例](#5)
 <hr>
@@ -75,7 +73,11 @@ classDiagram
 
 ```
 &ensp;经由分析：
-- 因为
+- 因为 Game 中有 Command 参与的方法，所有与 Command 为依赖关系
+- 在 Game 构造中就创建了 Room ，所以很强的关联， Game 和 Room 为组合关系
+- 同样 Parser 是与 Game 是强关联的，Parser 随着 Game 消失而消失，为组合关系
+- Parser 构造中对 CommandWords 初始化，为组合关系
+- Parser 有依赖 Commadn 的方法，所以为依赖关系
 ## 2.标注样例工程的代码(注释的风格检验放入的第三部分)<span id=2/>
 &emsp;需要注意的几点问题：
 - 类上的注释：描述类的作用，版本和作者信息
@@ -900,5 +902,269 @@ public class GameTest extends TestCase {
 &emsp;上述方法的单元测试均通过。
 
 ### 5.4 Item 类(物品类)测试
+&emsp;Item 类是新增扩展功能时创建的类，它关联于 Room 类 或 Player 类。其中的主要功能为：(1)获得物体的简短描述(2)获得物体的长描述(3)获得物体的重量(4)获得物体的名字。
+&emsp;其方法目标明确，测试代码如下:
+```java
+public class ItemTest extends TestCase {
+    Item item = new Item("西瓜", "一个大西瓜", 1);
+    @Test
+    public void testGetLongDescription() {
+        String s = "西瓜" + "\t" + "一个大西瓜" + "\t" + "1.0";
+        //测试应该正确
+        assertEquals(s,item.getLongDescription());
+    }
+    @Test
+    public void testGetShortDescription() {
+        String s = "西瓜" + "\t" +"1.0";
+        //测试应该正确
+        assertEquals(s,item.getShortDescription());
+    }
+    @Test
+    public void testGetWeight() {
+        float f = 1.0f;
+        //测试应该正确
+        assertEquals(f,item.getWeight());
 
+    }
+    @Test
+    public void testTestGetName() {
+        String name = "西瓜";
+        //测试应该正确
+        assertEquals(name,item.getName());
+    }
+}
+```
 
+### 5.5 Player 类(玩家类)测试
+&emsp;Player 是扩展功能 5 添加的新的类型，它是游戏玩家的实例，将 Game 的 currentRoom 字段重构入 Player 中，是类的内聚程度增加的表现，有利于之后功能的添加。Player 中有许多描述自身信息和利于游戏逻辑功能实现的代码：(1)增加物品到玩家身上 (2)测试是否加入一个物体会超重 (3)从玩家物品列表中获取一个物品 (4)丢弃Player身上的物品 (5)展示玩家的详细信息。
+&emsp;具体测试代码如下：
+```java
+public class PlayerTest extends TestCase {
+    @Test
+    public void testAddItem() {
+        Player player = new Player("TXG", 100, 0);
+        //因为 player 初始化时自动初始化存放 Item 的集合，所有通过添加 item,看是否集合中元素+1
+        int count1 = player.getItems().size();
+        player.addItem(new Item("1","1",0));
+        int count2 = player.getItems().size();
+        //应该测试正确
+        assertEquals(count2,count1+1);
+    }
+    @Test
+    public void testIsOver() {
+        Player player = new Player("TXG", 100, 0);
+        Item item = new Item("石头","一块石头",50);
+        Item item1 = new Item("大石头","一块大石头",120);
+        //均测试成功
+        assertEquals(false, player.isOver(item));
+        assertEquals(true, player.isOver(item1));
+    }
+    @Test
+    public void testGetItem() {
+        Player player = new Player("TXG", 100, 0);
+        Item item = new Item("石头","一块石头",50);
+        player.addItem(item);
+        //可用找到，测试成功
+        assertEquals(item,player.getItem("石头"));
+    }
+    @Test
+    public void testDropItem() {
+        Player player = new Player("TXG", 100, 0);
+        Item item = new Item("石头","一块石头",50);
+        player.addItem(item);
+        player.dropItem(item);
+        //正确
+        assertEquals(0, player.getItems().size());
+    }
+    @Test
+    public void testShowItems() {
+        Player player = new Player("TXG", 100, 0);
+        Item item = new Item("大石头","一块大石头",50);
+        Item item1 = new Item("石头","一块石头",10);
+        player.addItem(item);
+        player.addItem(item1);
+        String s = "你身上有:\n"
+                + "大石头" + "\t"+"50.0kg\n"
+                + "石头" + "\t"+"10.0kg\n";
+        //正确
+        assertEquals(s,player.showItems());
+    }
+    @Test
+    public void testGetSelfLongDescription() {
+        Player player = new Player("TXG", 100, 0);
+        Item item = new Item("大石头","一块大石头",50);
+        Item item1 = new Item("石头","一块石头",10);
+        player.addItem(item);
+        player.addItem(item1);
+        player.setCurrentRoom(new Room("一个房间"));
+        String s = "姓名：TXG\n"
+                + "最大耐受量:100.0kg\n"
+                + "目前耐受量:60.0kg\n"
+                + "剩余耐受量:40.0kg\n"
+                + "目前所在：一个房间\n"
+                + "你身上有:\n"
+                + "大石头\t50.0kg\n"
+                + "石头\t10.0kg\n";
+        //正确
+        assertEquals(s,player.getSelfLongDescription());
+    }
+}
+```
+
+### 5.6 CommandTableDriven 表驱动类测试
+&emsp;CommandTableDriven 中 存储了一个 HashMap，键值对为<命令，对应的功能方法>，其中对应的功能方法都是 lambda 表达式写入的，即是一个 Function<Command, Boolean> 类 , 其中根据功能方法的相似性，所有的方法的传入参数均为 Command 命令对象，返回值为 Boolean 类型 来判断是否退出程序。
+**(1)对 go 命令的测试**
+```java
+    @Test
+    public void testGo(){
+        Command command = new Command(CommandWord.GO,"east");
+        //正确
+        commandTableDriven.getTable().get(CommandWord.GO).apply(command);
+        //理论输出:
+        //你发现自己在 in a lecture theater.
+        //这个地方啥都没有
+        //Exits: west up
+
+    }
+```
+**(2)对 back 命令的测试**
+```java
+    @Test
+    public void testBack(){
+        Command command = new Command(CommandWord.GO,"east");
+        Command command1 = new Command(CommandWord.BACK,null);
+        //正确
+        commandTableDriven.getTable().get(CommandWord.GO).apply(command);
+        commandTableDriven.getTable().get(CommandWord.BACK).apply(command1);
+        //输出如下语句：
+//        你发现自己在 in a lecture theater.
+//                这个地方有:
+//        魔法饼干	有魔力一般，能让你更耐受	0.1kg
+//        Exits: west up
+//        你发现自己在 outside the main entrance of the university.
+//        这个地方有:
+//        画	一副奇怪的画，但看不懂画的是什么	0.2kg
+//        大石头	一块奇怪的大石头	60.0kg
+//        Exits: east south west
+    }
+```
+
+**(3)对 help 命令的测试**
+```java
+  @Test
+    public void testHelp(){
+        Command command = new Command(CommandWord.HELP,null);
+        //正确
+        commandTableDriven.getTable().get(CommandWord.HELP).apply(command);
+        //输出如下语句：
+        //Your command words are:
+        //drop 丢掉东西
+        //help 获取帮助
+        //take 拿起东西
+        //go 前往一个地方
+        //back 回到上一个地方
+        //eat 吃
+        //quit 退出游戏
+        //look 仔细观察所处地方
+        //items 展示所有物品
+        //info 展示玩家信息
+
+    }
+```
+**(4)对 quit 命令的测试**
+```java
+ @Test
+    public void testQuit(){
+        Command command = new Command(CommandWord.QUIT,null);
+        boolean flag = commandTableDriven.getTable().get(CommandWord.QUIT).apply(command);
+        //返回true，正确退出
+        assertEquals(true, flag);
+    }
+```
+
+**(5)对 take 命令的测试**
+```java
+    @Test
+    public void testTake(){
+        Command command = new Command(CommandWord.TAKE,"画");
+        //正确
+        commandTableDriven.getTable().get(CommandWord.TAKE).apply(command);
+        //输出如下语句：
+        //你成功拿起了画,你背包剩余容量为:49.8kg
+    }
+
+```
+
+**(6)对 drop 命令的测试**
+```java
+    @Test
+    public void testDrop(){
+        Command command = new Command(CommandWord.TAKE,"画");
+        commandTableDriven.getTable().get(CommandWord.TAKE).apply(command);
+        Command command1 = new Command(CommandWord.DROP,"画");
+        //正确
+        commandTableDriven.getTable().get(CommandWord.DROP).apply(command1);
+        //输出如下语句：
+        //你成功拿起了画,你背包剩余容量为:49.8kg
+        //你成功丢掉了画,你背包剩余容量为:50.0kg
+        //你身上啥都没有
+    }
+```
+
+**(7)对 look 命令的测试**
+```java
+    @Test
+    public void testLook(){
+        Command command = new Command(CommandWord.LOOK,null);
+        commandTableDriven.getTable().get(CommandWord.LOOK).apply(command);
+        //输出如下语句：
+        //你发现自己在 outside the main entrance of the university.
+        //这个地方有:
+        //画	一副奇怪的画，但看不懂画的是什么	0.2kg
+        //大石头	一块奇怪的大石头	60.0kg
+        //Exits: east south west
+    }
+```
+**(8)对 items 命令的测试**
+```java
+    @Test
+    public void testItems(){
+        Command command = new Command(CommandWord.ITEMS,null);
+        commandTableDriven.getTable().get(CommandWord.ITEMS).apply(command);
+        //输出如下语句：
+        //这个地方有:
+        //画	一副奇怪的画，但看不懂画的是什么	0.2kg
+        //大石头	一块奇怪的大石头	60.0kg
+        //
+        //你身上啥都没有
+    }
+```
+**(9)对 info 命令的测试**
+```java
+    @Test
+    public void testInfo(){
+        Command command = new Command(CommandWord.INFO,null);
+        commandTableDriven.getTable().get(CommandWord.INFO).apply(command);
+        //输出如下语句：
+        //你仔细的审查者自己：
+        //姓名：TXG
+        //最大耐受量:50.0kg
+        //目前耐受量:0.0kg
+        //剩余耐受量:50.0kg
+        //目前所在：outside the main entrance of the university
+        //你身上啥都没有
+    }
+```
+**(10)对 eat cookie 命令的测试**
+```java
+    @Test
+    public void testEat(){
+        Command command = new Command(CommandWord.EAT, "魔法饼干");
+        //给房间添加魔法饼干
+        game.getPlayer().getCurrentRoom().addItem(new Item("魔法饼干","1",1));
+        commandTableDriven.getTable().get(CommandWord.EAT).apply(command);
+        //正确输入如下：
+        //你吃了这个魔法饼干，感觉力大无穷，神清气爽，耐受+20kg你现在的容量为：70.0kg
+    }
+
+```
