@@ -414,7 +414,49 @@ if (nextRoom == null) {
 - 当多次 go ,又回到 起点 时，这时起点也会有一个 back ，使用 back 指令可以回到上一个房间
 
 #### &emsp;4.3 更高级的 back ,可多次回退，直至回到终点
+&emsp;&emsp;(1)我们上一步实现的 back 可以实现针对当前房间的回退，是因为将上一个房间作为一个新的名为 "back" 的出口进行了存储。，这样的问题是玩家一旦从起点出发后，虽然可以多次回退，但无法回退正确的步数到起点。所以，这次采取**栈**来存储历史房间记录，首先展示一些，栈的定义与初始化：
+```java
+ /**
+     * back的回退栈，记录着玩家去过的场景
+     */
+    private Stack<Room> backs;
+    /**
+     * 创建游戏并初始化内部数据和解析器
+     */
+    public Game() {
+        //初始化栈
+        backs=new Stack<>();
+        //创建所有房间
+        createRooms();
+        //初始化解析器
+        parser = new Parser();
+        //表驱动
+        commandTableDriven=new CommandTableDriven(this);
+    }
 
+```
+&emsp;&emsp;(2)同样，在 go 命令去另一个房间时，将当前房间压入栈，表示生成一个历史房间记录：
+```java
+ //进入了另一个房间，将上一个房间入栈
+    game.getBacks().push(game.getCurrentRoom());
+    game.setCurrentRoom(nextRoom);
+
+    System.out.println(game.getCurrentRoom().getLongDescription());
+```
+&emsp;&emsp;(3)在表驱动中，修改 back 的功能代码，判断**栈**的状态，如果栈为空，则表示无法回退，玩家已在起点；如果栈不为空，取出栈顶房间，作为 game 的当前房间，表示对进入上一个房间，并打印描述信息：
+```java
+ table.put(CommandWord.BACK,command -> {
+            Stack<Room> stack = game.getBacks();
+            //对栈顶元素进行判断
+            if(stack.size()!=0){
+                game.setCurrentRoom(stack.pop());
+                System.out.println(game.getCurrentRoom().getLongDescription());
+            }else{
+                System.out.println("这已经是起点了...");
+            }
+            return false;
+        });
+```
 ### 5.编写测试用例<span id=5/>
 
 

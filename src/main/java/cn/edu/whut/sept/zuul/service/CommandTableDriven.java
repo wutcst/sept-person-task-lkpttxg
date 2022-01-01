@@ -6,6 +6,7 @@ import cn.edu.whut.sept.zuul.entity.Command;
 import cn.edu.whut.sept.zuul.entity.Room;
 
 import java.util.HashMap;
+import java.util.Stack;
 import java.util.function.Function;
 
 /**
@@ -51,9 +52,13 @@ public class CommandTableDriven {
                 System.out.println("There is no door!");
             }
             else {
-                //在进去下一个房间前，将这个房间的信息给back,则可以通过back返回上一个房间
+                /*//在进去下一个房间前，将这个房间的信息给back,则可以通过back返回上一个房间
                 nextRoom.setExit("back",game.getCurrentRoom());
+                 */
+                //进入了另一个房间，将上一个房间入栈
+                game.getBacks().push(game.getCurrentRoom());
                 game.setCurrentRoom(nextRoom);
+
                 System.out.println(game.getCurrentRoom().getLongDescription());
             }
             return false;
@@ -83,13 +88,18 @@ public class CommandTableDriven {
         table.put(CommandWord.LOOK,command -> {
             System.out.println(game.getCurrentRoom().getLongDescription());return false;});
 
-        // back 指令对应的功能，回退到上一个房间
+        /* back 指令对应的功能，回退到上一个房间
+        如果栈顶为空，则表示已经在起点；
+        否则，pop 出栈顶作为当前房间，输出描述信息
+         */
         table.put(CommandWord.BACK,command -> {
-            if(game.getCurrentRoom().hasExit("back")){
-                command.setSecondWord("back");
-                table.get(CommandWord.GO).apply(command);
-            }else {
-                System.out.println("这已经是起点...");
+            Stack<Room> stack = game.getBacks();
+            //对栈顶元素进行判断
+            if(stack.size()!=0){
+                game.setCurrentRoom(stack.pop());
+                System.out.println(game.getCurrentRoom().getLongDescription());
+            }else{
+                System.out.println("这已经是起点了...");
             }
             return false;
         });

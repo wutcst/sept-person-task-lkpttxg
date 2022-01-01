@@ -20,6 +20,8 @@ import cn.edu.whut.sept.zuul.entity.Room;
 import cn.edu.whut.sept.zuul.enums.CommandWord;
 import cn.edu.whut.sept.zuul.controller.Parser;
 
+import java.util.Stack;
+
 /**
  * 该类是游戏的主体。它启动游戏，然后进入一个不断读取和执行输入的命令的循环.<br>
  * 它也包括执行每一个用户命令的代码。
@@ -42,12 +44,17 @@ public class Game
      * 表驱动类的实例对象，方便服务进行
      */
     private CommandTableDriven commandTableDriven;
-
+    /**
+     * back的回退栈，记录着玩家去过的场景
+     */
+    private Stack<Room> backs;
     /**
      * 创建游戏并初始化内部数据和解析器
      */
-    public Game()
-    {   //创建所有房间
+    public Game() {
+        //初始化栈
+        backs=new Stack<>();
+        //创建所有房间
         createRooms();
         //初始化解析器
         parser = new Parser();
@@ -86,7 +93,9 @@ public class Game
         //创建物品
         outside.addItem(new Item("门边上有一块奇怪的石头",100));
         outside.addItem(new Item("墙上有奇怪的画，但看不懂画的是什么",0.2f));
-        currentRoom = outside;  // start game outside
+        // start game outside
+        currentRoom = outside;
+
     }
 
     /**
@@ -125,8 +134,8 @@ public class Game
      * @param command 待处理的游戏指令，由解析器从用户输入内容生成.
      * @return 如果执行的是游戏结束指令，则返回true，否则返回false.
      */
-    private boolean processCommand(Command command)
-    {  boolean wantToQuit = false;
+    private boolean processCommand(Command command) {
+        boolean wantToQuit = false;
 
        if(command.isUnknown()) {
             System.out.println("I don't know what you mean...");
@@ -161,5 +170,9 @@ public class Game
 
     public void setCurrentRoom(Room currentRoom) {
         this.currentRoom = currentRoom;
+    }
+
+    public Stack<Room> getBacks() {
+        return backs;
     }
 }
