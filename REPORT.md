@@ -1,13 +1,5 @@
 # 软工实训任务报告
 
-#### [目录]()
-#### [1.阅读和描述样例工程](#1)
-##### [&emsp;1.1 理解与描述样例工程功能](#2)
-##### [&emsp;1.2 UML类图描述代码结构组成](#3)
-#### [2.标注样例工程的代码](#4)
-#### [3.扩充和维护样例工程](#5)
-#### [4.功能扩充点](#4)
-#### [5.编写测试用例](#5)
 <hr>
 
 
@@ -68,12 +60,14 @@ classDiagram
     Room : -getExitString() String
     
     Game..>Command
-    Game-->Parser
-    Game-->Room
+    Game*--Parser
+    Game*--Room
     Parser..>Command
-    Parser-->CommandWords
+    Parser*--CommandWords
 
 ```
+&ensp;经由分析：
+- 因为
 ## 2.标注样例工程的代码(注释的风格检验放入的第三部分)<span id=2/>
 &emsp;需要注意的几点问题：
 - 类上的注释：描述类的作用，版本和作者信息
