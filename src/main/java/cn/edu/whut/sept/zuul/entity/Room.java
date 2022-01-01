@@ -70,7 +70,7 @@ public class Room
         for(Item item:items){
             s.append(item.getName()+"\t"+item.getDescription()+"\t"+item.getWeight()+"kg"+"\n");
         }
-        return "仔细观察这个房间:\n"+s.toString();
+        return "这个房间有:\n"+s.toString();
     }
 
     /**

@@ -665,6 +665,15 @@ public class CommandTableDriven {
         });
 ```
 &emsp;&emsp;(4)游戏中增加一个新命令“Items”，打印所有物品信息。
+```java
+ //展示所有物品信息
+        table.put(CommandWord.ITEMS,command -> {
+            System.out.println(player.getCurrentRoom().getItemsDescription());
+            System.out.println(player.showItems());
+            return false;
+        });
+```
+
 ### 5.编写测试用例<span id=5/>
 
 

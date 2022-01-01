@@ -171,6 +171,13 @@ public class CommandTableDriven {
             }
             return false;
         });
+
+        //展示所有物品信息
+        table.put(CommandWord.ITEMS,command -> {
+            System.out.println(player.getCurrentRoom().getItemsDescription());
+            System.out.println(player.showItems());
+            return false;
+        });
     }
 
     /**

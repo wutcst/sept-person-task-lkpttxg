@@ -104,8 +104,8 @@ public class Game
         office.setExit("south",cave);
         cave.setTransferPoint(true);
         //创建物品
-        outside.addItem(new Item("大石头","门边上有一块奇怪的石头",100));
-        outside.addItem(new Item("画","墙上有奇怪的画，但看不懂画的是什么",0.2f));
+        outside.addItem(new Item("大石头","一块奇怪的大石头",100));
+        outside.addItem(new Item("画","一副奇怪的画，但看不懂画的是什么",0.2f));
         // start game outside
         player.setCurrentRoom(outside);
     }

@@ -10,7 +10,8 @@ public enum CommandWord {
     GO("go"),QUIT("quit"),
     HELP("help"),LOOK("look"),
     BACK("back"),UNKNOWN("?"),
-    TAKE("take"),DROP("drop");
+    TAKE("take"),DROP("drop"),
+    ITEMS("items");
 
     private String commandString;
 
