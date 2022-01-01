@@ -502,6 +502,59 @@ if(nextRoom.isTransferPoint()){
 - 可以在传送后的房间中使用 back 回到传送前的房间
 - 因为房间只是充当一个秘密传送门，所以并没有存放物品
 
+#### &emsp;4.5 实现 Player 玩家类
+&emsp;&emsp;(1)创建玩家类，属性字段通过考虑之后的扩展，有：姓名，最大承受重量，身上现有重量，身上所有物品，当前所处房间，历史房间:
+```java
+public class Player {
+    private String name;
+    private float maxBearWeight;
+    private float nowWeight;
+    private Set<Item> items;
+    private Room currentRoom;
+    private Stack<Room> room_history;
+
+    /**
+     * 构造方法，实例化玩家类.
+     *
+     * @param name 玩家信息
+     * @param maxBearWeight 玩家最大承受重量
+     */
+    public Player(String name, float maxBearWeight,float nowWeight) {
+        this.name = name;
+        this.maxBearWeight = maxBearWeight;
+        this.nowWeight=nowWeight;
+        //初始化集合
+        items=new HashSet<>();
+        room_history=new Stack<>();
+    }
+```
+&emsp;&emsp;(2)在第(1)步，我们可以将 Game 类中的属性 currentName 转移到玩家类中，因为有了玩家类，当前房间更像是玩家的信息，并且历史房间的存储应该也是针对玩家的。所以以上算是对系统的一次重构。接下来，在 Player 中实现方法使玩家对象可以添加物品，判断可携带物品是否超过重量上限。
+```java
+ /**
+     * 添加物品
+     * @param item 物品对象
+     * @return 可以添加为 true,不能添加为 flase
+     */
+    public boolean addItem(Item item){
+        if(!isOver(item)){
+            items.add(item);
+            nowWeight+=item.getWeight();
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * 判断加入某个物体后是否超重
+     * @param item 物体对象
+     * @return 超重为true，否则为flase
+     */
+    public boolean isOver(Item item){
+        return maxBearWeight<item.getWeight()+nowWeight;
+    }
+```
+&emsp;&emsp;(3)实现 take 和 drop 命令。首先我们将 Player 玩家对象
+
 ### 5.编写测试用例<span id=5/>
 
 
