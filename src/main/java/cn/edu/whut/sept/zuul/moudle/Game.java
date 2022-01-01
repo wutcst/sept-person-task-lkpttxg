@@ -64,7 +64,7 @@ public class Game {
     /**
      * 创建所有房间对象并连接其出口用以构建迷宫.
      */
-    private void createRooms() {
+    public void createRooms() {
         Room outside, theater, pub, lab, office, cave;
         Room forest;
 

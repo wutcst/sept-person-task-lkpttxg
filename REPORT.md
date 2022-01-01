@@ -777,6 +777,128 @@ table.put(CommandWord.EAT,command -> {
  theater.setExit("up",forest);
 ```
 
-## 5.编写测试用例<span id=5/>
+## 5.编写测试用例(实验截图见实践报告)<span id=5/>
+整个单元测试共分为两部分：一个是新增枚举类型与其相关类的测试，因为枚举类型的增加，间接的改变了其它类中方法的代码；二是对增加的表驱动类中的7个大的扩展功能进行单元测试(其中第5个Player玩家扩展功能又包括5个小功能)。
+### 5.1 枚举类型 CommandWord 测试
+&emsp;新增的枚举类型 CommandWord 一共有两个功能：(1) 将命令字符串以重写的 toString 方法返回；(2) getter 方法，获得该命令字符串的具体描述，帮助玩家理解行为指令。具体测试如下：
+```java
+import cn.edu.whut.sept.zuul.enums.CommandWord;
+import junit.framework.TestCase;
+import org.junit.Test;
+
+public class CommandWordsTest extends TestCase {
+    CommandWords commandWords = new CommandWords();
+    @Test
+    public void testIsCommand() {
+        //输入help,判断help是否为可用的行为指令,help是可用指令,结果为true
+        assertEquals(true,commandWords.isCommand("help"));
+        //输入goo,为无用的行为指令，结果为false
+        assertEquals(false,commandWords.isCommand("goo"));
+    }
+    @Test
+    public void testGetCommandWord() {
+        //该方法的返回值应该是 CommandWord.BACK
+        assertEquals(CommandWord.BACK, commandWords.getCommandWord("back"));
+    }
+    @Test
+    public void testShowAll() {
+        //控制台输出正确，方法正确
+        commandWords.showAll();
+    }
+}
+```
+&emsp;上述方法的单元测试均通过。
+
+### 5.2 CommandWords 类测试
+&emsp;CommandWords 中存放的正是玩家执行的指令组，因为以前存放的都是魔法值，存在隐形耦合的问题，所以当我们加入枚举类型后，我们在 CommandWords 属性增加一个 HashMap 集合存放【命令字符串与枚举类型的键值对】。方便我们进行转换和判断。
+&emsp;CommandWords 中共有3个功能：(1)判断某个输入指令是否为游戏中可用的行为指令；(2)获得某个字符串对应的 CommandWord 枚举对象；(3) 控制台打印所有的行为指令。
+```java
+import junit.framework.TestCase;
+import org.junit.Test;
+
+public class CommandWordTest extends TestCase {
+    CommandWord commandWord = CommandWord.GO;
+    @Test
+    public void testTestToString() {
+        //应该为“go”，不为“go”则判断为false
+        assertEquals( "go", commandWord.toString());
+
+    }
+    @Test
+    public void testGetDescription() {
+        //应该为“前往一个地方”，不为“前往一个地方”则判断为false
+        assertEquals("前往一个地方", commandWord.getDescription());
+    }
+
+}
+```
+&emsp;上述方法的单元测试均通过。
+### 5.3 Game 类的测试
+&emsp;Game 类中是游戏的主体类型，其中因为枚举类型的增加和用表驱动方法进行优化 if-else 语句的影响，方法 processCommand 代码修改，需要进行测试；另外在扩展功能中，将随机生成魔法饼干的功能也属于 Game 类，所以进行测试。
+&emsp;但需要注意的是，因为 Game 中的 processCommand 和 addCookie 是私有方法，所以需要通过**反射**机制来获取 Method 间接执行私有方法。具体测试如下：
+```java
+public class GameTest extends TestCase {
+    //生成game对象
+    Game game = new Game();
+    //获得Game的Class类型
+    Class c = Game.class;
+    //待定Method类型
+    Method method;
+
+    /**
+     * 测试 processCommand 方法.
+     */
+    @Test
+    public void testProcessCommand() {
+        //反射获取
+        try {
+            method = c.getDeclaredMethod("processCommand",new Class[]{Command.class});
+            //使私有可执行
+            method.setAccessible(true);
+            //传入 new Command(CommandWord.GO,"east") 对象
+            method.invoke(game,new Object[]{new Command(CommandWord.GO,"east")});
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        //该测试结果应在控制台输出：
+        //你发现自己在 in a lecture theater.
+        //这个地方啥都没有
+        //Exits: west up
+
+        //具体测试结果一致。即可用执行 Command 指令的执行
+    }
+
+    /**
+     * 增加Cookie.
+     */
+    @Test
+    public void testAddCookie() {
+        //反射获取
+        try {
+            method = c.getDeclaredMethod("addCookie");
+            //使私有可执行
+            method.setAccessible(true);
+            //空参方法，执行完以后，房间中会多增加一块饼干
+            method.invoke(game);
+            //查询所有房间中cookie的数量，总cookie数应该是2块，因为初始化也调用了addCookie方法
+            int count=0;
+            for (Room room : game.getRooms()) {
+                if (room.getItem("魔法饼干")!=null) {
+                    count++;
+                }
+            }
+            //count数量应该为2
+            assertEquals(2,count);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+}
+```
+&emsp;上述方法的单元测试均通过。
+
+### 5.4 Item 类(物品类)测试
 
 
