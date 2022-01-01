@@ -11,7 +11,8 @@ public enum CommandWord {
     HELP("help"),LOOK("look"),
     BACK("back"),UNKNOWN("?"),
     TAKE("take"),DROP("drop"),
-    ITEMS("items");
+    ITEMS("items"),EAT("eat"),
+    INFO("info");
 
     private String commandString;
 

@@ -137,7 +137,7 @@ public class CommandTableDriven {
             //查询是否有这个物品在房间中
             Item item = player.getCurrentRoom().getItem(name);
             if(item==null){
-                System.out.println("这个房间没那个东西");
+                System.out.println("这个房间没有这个东西");
             }else {
                 //player拿东西
                 //先判断是否拿的动
@@ -168,6 +168,8 @@ public class CommandTableDriven {
                 player.dropItem(item);
                 System.out.println("你成功丢掉了"+item.getName()+",你背包剩余容量为:"+(player.getMaxBearWeight()-player.getNowWeight())+"kg");
                 System.out.println(player.showItems());
+                //丢掉的物品放入当前房间中
+                player.getCurrentRoom().addItem(item);
             }
             return false;
         });
@@ -176,6 +178,33 @@ public class CommandTableDriven {
         table.put(CommandWord.ITEMS,command -> {
             System.out.println(player.getCurrentRoom().getItemsDescription());
             System.out.println(player.showItems());
+            return false;
+        });
+
+        //玩家执行吃magic cookie
+        table.put(CommandWord.EAT,command -> {
+            if(!command.hasSecondWord()) {
+                // if there is no second word, we don't know eat what...
+                System.out.println("EAT what?");
+                return false;
+            }
+            //获取物品名称
+            String name = command.getSecondWord();
+            //查询是否有这个物品在房间中
+            Item item = player.getCurrentRoom().getItem(name);
+            if(item==null){
+                System.out.println("这个房间没有这个东西");
+            }else {
+                if(item.getName().equals("魔法饼干")){
+                    //玩家增加耐受容量+20kg
+                    player.setMaxBearWeight(player.getMaxBearWeight()+20);
+                    System.out.println("你吃了这个魔法饼干，感觉力大无穷，神清气爽，耐受+20kg"+"你现在的容量为："+player.getMaxBearWeight()+"kg");
+                    //把魔法饼干从房间移除
+                    player.getCurrentRoom().getItems().remove(item);
+                }else {
+                    System.out.println("这个东西不能吃！！！");
+                }
+            }
             return false;
         });
     }

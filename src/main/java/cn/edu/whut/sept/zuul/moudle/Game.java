@@ -104,8 +104,10 @@ public class Game
         office.setExit("south",cave);
         cave.setTransferPoint(true);
         //创建物品
-        outside.addItem(new Item("大石头","一块奇怪的大石头",100));
+        outside.addItem(new Item("大石头","一块奇怪的大石头",60));
         outside.addItem(new Item("画","一副奇怪的画，但看不懂画的是什么",0.2f));
+        //随机放入一个魔法饼干到房间中
+        addCookie();
         // start game outside
         player.setCurrentRoom(outside);
     }
@@ -175,6 +177,15 @@ public class Game
 
     }
 
+    /**
+     * 随机给一个非传送房间加入魔法饼干
+     */
+    private void addCookie(){
+        //随机获得一个非传送房间的房间
+        int i=(int)(Math.random()*rooms.size());
+        //给这个房间添加魔法饼干
+        rooms.get(i).addItem(new Item("魔法饼干","有魔力一般，能让你更耐受",0.1f));
+    }
 
     public Parser getParser() {
         return parser;

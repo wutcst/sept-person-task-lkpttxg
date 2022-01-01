@@ -615,7 +615,7 @@ public class CommandTableDriven {
         //初始化驱动表
         table=new HashMap<>();
 ```
-&emsp;&emsp;然后是实现 take 和 drop 指令。它们的实现在表驱动类中，具体代码如下：
+&emsp;&emsp;然后是实现 take 和 drop 指令。当玩家执行 take 时，首先判断物品是否存在，如果存在则继续判断是否容量支持，再决定是否添加物品。当玩家成功添加后，该物品不属于当前房间，而属于玩家；当玩家执行 drop 时，首先判断玩家是否有该物品，如果有，玩家进行 drop ,物品不属于玩家，而属于当前房间。它们的实现在表驱动类中，具体代码如下：
 ```java
  //玩家的拿东西指令
         table.put(CommandWord.TAKE,command -> {
@@ -660,11 +660,13 @@ public class CommandTableDriven {
                 player.dropItem(item);
                 System.out.println("你成功丢掉了"+item.getName()+",你背包剩余容量为:"+(player.getMaxBearWeight()-player.getNowWeight())+"kg");
                 System.out.println(player.showItems());
+                 //丢掉的物品放入当前房间中
+                player.getCurrentRoom().addItem(item);
             }
             return false;
         });
 ```
-&emsp;&emsp;(4)游戏中增加一个新命令“Items”，打印所有物品信息。
+&emsp;&emsp;(4)游戏中增加一个新命令“Items”，打印所有物品信息。如果房间无物品，则打印房间什么都没有，如果人物没物品，则打印你身上什么也没有。
 ```java
  //展示所有物品信息
         table.put(CommandWord.ITEMS,command -> {
@@ -673,7 +675,19 @@ public class CommandTableDriven {
             return false;
         });
 ```
-
+&emsp;&emsp;(5)随机在房间中生成魔法饼干，用户执行“eat cookie”命令，吃掉后可增加负重。
+```java
+/**
+     * 随机给一个非传送房间加入魔法饼干
+     */
+    private void addCookie(){
+        //随机获得一个非传送房间的房间
+        int i=(int)(Math.random()*rooms.size());
+        //给这个房间添加魔法饼干
+        rooms.get(i).addItem(new Item("魔法饼干","有魔力一般，能让你更耐受",0.1f));
+    }
+```
+&emsp;&emsp;在添加完魔法饼干后，在表驱动类中实现 eat magic 的功能。
 ## 5.编写测试用例<span id=5/>
 
 

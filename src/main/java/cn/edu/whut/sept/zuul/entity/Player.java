@@ -123,4 +123,9 @@ public class Player {
     public float getNowWeight() {
         return nowWeight;
     }
+
+    public void setMaxBearWeight(float maxBearWeight) {
+        this.maxBearWeight = maxBearWeight;
+    }
+
 }
