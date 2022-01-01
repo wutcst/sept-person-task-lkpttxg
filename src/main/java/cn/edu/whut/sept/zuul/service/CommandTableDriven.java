@@ -5,7 +5,9 @@ import cn.edu.whut.sept.zuul.moudle.Game;
 import cn.edu.whut.sept.zuul.entity.Command;
 import cn.edu.whut.sept.zuul.entity.Room;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Random;
 import java.util.Stack;
 import java.util.function.Function;
 
@@ -55,10 +57,24 @@ public class CommandTableDriven {
                 /*//在进去下一个房间前，将这个房间的信息给back,则可以通过back返回上一个房间
                 nextRoom.setExit("back",game.getCurrentRoom());
                  */
+                //检验下一个房间是否有秘密传送点
+                if(nextRoom.isTransferPoint()){
+                    //输出nextRoom的描述
+                    System.out.println(nextRoom.getShortDescription());
+                    ArrayList<Room> rooms = game.getRooms();
+                    //通过随机数实现随机传输到另一个房间
+                    int i =(int)(Math.random()*rooms.size());
+                    nextRoom = rooms.get(i);
+                    //保证房间不相同
+                    while(nextRoom == game.getCurrentRoom()){
+                        i =(int)(Math.random()*rooms.size());
+                        nextRoom = rooms.get(i);
+                    }
+
+                }
                 //进入了另一个房间，将上一个房间入栈
                 game.getBacks().push(game.getCurrentRoom());
                 game.setCurrentRoom(nextRoom);
-
                 System.out.println(game.getCurrentRoom().getLongDescription());
             }
             return false;

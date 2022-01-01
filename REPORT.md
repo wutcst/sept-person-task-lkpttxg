@@ -457,6 +457,51 @@ if (nextRoom == null) {
             return false;
         });
 ```
+&emsp;&emsp;(4)该功能的检验如下
+- 玩家有多少次 go 命令，就可以实现多少次 back 命令
+- back 可以多次回退，直至回到起点，不再回退
+- back 命令单独其作为，后面可空格后跟其它参数但不影响
+#### &emsp;4.4 在游戏中增加具有传输功能的房间
+&emsp;&emsp;(1)如果要实现随机传送的话，需要知道所有房间对象信息才可以进行随机选择。这里我们在 Game 中再创建一个 ArrayList 数组 (目前Game中已存在比较多的属性字段了，这并不是好事，所以在之后会尽早重构)
+```java
+ /**
+     * 创建游戏并初始化内部数据和解析器
+     */
+    private ArrayList<Room> rooms;
+    public Game() {
+        //初始化栈
+        backs=new Stack<>();
+        //初始化对所有房间的存储数组列表
+        rooms=new ArrayList<>();
+        //创建所有房间
+        createRooms();
+        //初始化解析器
+        parser = new Parser();
+        //表驱动
+        commandTableDriven=new CommandTableDriven(this);
+    }
+```
+&emsp;&emsp;(2)因为有传送点的房间也是一个 Room ,所以在 Room 中添加了一个属性来检验是否为传送房间。并在即将进入这个传送房间前，进行逻辑判断，判断逻辑在 go 中：
+```java
+ //检验下一个房间是否有秘密传送点
+if(nextRoom.isTransferPoint()){
+    //输出nextRoom的描述
+    System.out.println(nextRoom.getShortDescription());
+    ArrayList<Room> rooms = game.getRooms();
+    //通过随机数实现随机传输到另一个房间
+    int i =(int)(Math.random()*rooms.size());
+    nextRoom = rooms.get(i);
+    //保证房间不相同
+    while(nextRoom == game.getCurrentRoom()){
+        i =(int)(Math.random()*rooms.size());
+        nextRoom = rooms.get(i);
+    }
+```
+&emsp;&emsp;(3)该功能检验如下：
+- 当从一个房间进入传送房间时：输出传送房间的描述话语，并说明将玩家进行传送，将玩家传送到一个随机的另一个房间
+- 可以在传送后的房间中使用 back 回到传送前的房间
+- 因为房间只是充当一个秘密传送门，所以并没有存放物品
+
 ### 5.编写测试用例<span id=5/>
 
 

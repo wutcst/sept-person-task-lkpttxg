@@ -13,6 +13,7 @@ import java.util.HashMap;
 public class Room
 {
     private String description;
+    private boolean isTransferPoint;
     /**
      * 用 HashMap 存放了一个房间的各种出口与其对应房间的 key-value 值
      */
@@ -115,6 +116,14 @@ public class Room
             return true;
         }
         return false;
+    }
+
+    public boolean isTransferPoint() {
+        return isTransferPoint;
+    }
+
+    public void setTransferPoint(boolean transferPoint) {
+        isTransferPoint = transferPoint;
     }
 }
 
