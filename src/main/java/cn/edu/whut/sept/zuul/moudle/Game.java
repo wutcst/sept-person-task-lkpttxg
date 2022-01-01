@@ -14,6 +14,7 @@
 package cn.edu.whut.sept.zuul.moudle;
 
 import cn.edu.whut.sept.zuul.entity.Item;
+import cn.edu.whut.sept.zuul.entity.Player;
 import cn.edu.whut.sept.zuul.service.CommandTableDriven;
 import cn.edu.whut.sept.zuul.entity.Command;
 import cn.edu.whut.sept.zuul.entity.Room;
@@ -37,33 +38,33 @@ public class Game
      * @see Parser#getCommand()
      */
     private Parser parser;
+
     /**
-     * 在游戏主体中，currentRoom表示用户所在的当前房间。
+     * 目前只有一个玩家，所有并没有用集合存储
      */
-    private Room currentRoom;
+    private Player player;
+
     /**
      * 表驱动类的实例对象，方便服务进行
      */
     private CommandTableDriven commandTableDriven;
-    /**
-     * back的回退栈，记录着玩家去过的场景
-     */
-    private Stack<Room> backs;
+
+    private ArrayList<Room> rooms;
+
     /**
      * 创建游戏并初始化内部数据和解析器
      */
-    private ArrayList<Room> rooms;
     public Game() {
-        //初始化栈
-        backs=new Stack<>();
         //初始化对所有房间的存储数组列表
         rooms=new ArrayList<>();
+        //创建玩家对象(目前只有一个)
+        createPlayers();
         //创建所有房间
         createRooms();
         //初始化解析器
         parser = new Parser();
         //表驱动
-        commandTableDriven=new CommandTableDriven(this);
+        commandTableDriven=new CommandTableDriven(this,player);
     }
 
     /**
@@ -103,11 +104,14 @@ public class Game
         office.setExit("south",cave);
         cave.setTransferPoint(true);
         //创建物品
-        outside.addItem(new Item("门边上有一块奇怪的石头",100));
-        outside.addItem(new Item("墙上有奇怪的画，但看不懂画的是什么",0.2f));
+        outside.addItem(new Item("大石头","门边上有一块奇怪的石头",100));
+        outside.addItem(new Item("画","墙上有奇怪的画，但看不懂画的是什么",0.2f));
         // start game outside
-        currentRoom = outside;
+        player.setCurrentRoom(outside);
+    }
 
+    private void createPlayers(){
+        this.player=new Player("TXG",50,0);
     }
 
     /**
@@ -138,7 +142,7 @@ public class Game
         System.out.println("World of Zuul is a new, incredibly boring adventure game.");
         System.out.println("Type 'help' if you need help.");
         System.out.println();
-        System.out.println(currentRoom.getLongDescription());
+        System.out.println(player.getCurrentRoom().getLongDescription());
     }
 
     /**
@@ -176,21 +180,6 @@ public class Game
         return parser;
     }
 
-    public Room getCurrentRoom() {
-        return currentRoom;
-    }
-
-    public void setCurrentRoom(Room currentRoom) {
-        this.currentRoom = currentRoom;
-    }
-
-    /**
-     * getter 方法，得到存储历史房间的栈
-     * @return 返回存储历史房间的栈
-     */
-    public Stack<Room> getBacks() {
-        return backs;
-    }
 
     /**
      * getter 方法，得到房间列表
@@ -198,5 +187,9 @@ public class Game
      */
     public ArrayList<Room> getRooms() {
         return rooms;
+    }
+
+    public Player getPlayer() {
+        return player;
     }
 }

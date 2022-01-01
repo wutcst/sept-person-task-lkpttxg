@@ -543,7 +543,14 @@ public class Player {
         }
         return false;
     }
-
+       /**
+     * 丢弃player身上的物品
+     * @param item 丢弃物品
+     */
+   public void dropItem(Item item){
+        items.remove(item);
+        nowWeight-=item.getWeight();
+   }
     /**
      * 判断加入某个物体后是否超重
      * @param item 物体对象
@@ -553,8 +560,111 @@ public class Player {
         return maxBearWeight<item.getWeight()+nowWeight;
     }
 ```
-&emsp;&emsp;(3)实现 take 和 drop 命令。首先我们将 Player 玩家对象
+&emsp;&emsp;(3)实现 take 和 drop 命令。首先我们将 Player 玩家对象在 Game 中创建，对表驱动中的功能方法进行重构之后的修改。修改如下：
+```java
+ /**
+     * 目前只有一个玩家，所有并没有用集合存储
+     */
+    private Player player;
 
+    /**
+     * 表驱动类的实例对象，方便服务进行
+     */
+    private CommandTableDriven commandTableDriven;
+
+    private ArrayList<Room> rooms;
+
+    /**
+     * 创建游戏并初始化内部数据和解析器
+     */
+    public Game() {
+        //初始化对所有房间的存储数组列表
+        rooms=new ArrayList<>();
+        //创建玩家对象(目前只有一个)
+        createPlayers();
+        //创建所有房间
+        createRooms();
+        //初始化解析器
+        parser = new Parser();
+        //表驱动
+        commandTableDriven=new CommandTableDriven(this,player);
+    }
+```
+&emsp;&emsp;以上是对 Game 中字段的重构。接下来是对表驱动的重构，因为整个游戏是一个整体，而玩家是不同的个体，所有我们将表驱动类的传参改成了(game,player)以针对不同的玩家进行操作。
+```java
+public class CommandTableDriven {
+    /**
+     * 每个指令对应的函数存储到 map 中,形成表驱动结构
+     */
+    private final HashMap<CommandWord, Function<Command,Boolean>> table;
+    private final Game game;
+    private final Player player;
+
+    /**
+     * 当表驱动对象初始化后，将<code>Game</code>中的处理业务进行一一对应，其函数的注册是用的lambda表达式<br>
+     * 值得提醒的是：lambda 表达式中 Function 的传入参数为 Command 对象 ,返回参数为 Boolean。这是因为，通过发现，
+     * 无论是已有功能还是扩展功能，我们对其的执行的服务的输入最多只有一个 Command 类型，输出最多为 Boolean 类型判断是否
+     * 退出游戏。
+     * @param game 游戏主体
+     */
+    public CommandTableDriven(Game game,Player player){
+        //初始化 game
+        this.game=game;
+        //初始化 player
+        this.player=player;
+        //初始化驱动表
+        table=new HashMap<>();
+```
+&emsp;&emsp;然后是实现 take 和 drop 指令。它们的实现在表驱动类中，具体代码如下：
+```java
+ //玩家的拿东西指令
+        table.put(CommandWord.TAKE,command -> {
+            if(!command.hasSecondWord()) {
+                // if there is no second word, we don't know take what...
+                System.out.println("Take what?");
+                return false;
+            }
+            //获取物品名称
+            String name = command.getSecondWord();
+            //查询是否有这个物品在房间中
+            Item item = player.getCurrentRoom().getItem(name);
+            if(item==null){
+                System.out.println("这个房间没那个东西");
+            }else {
+                //player拿东西
+                //先判断是否拿的动
+                if(player.addItem(item)){
+                    player.getCurrentRoom().getItems().remove(item);
+                    System.out.println("你成功拿起了"+item.getName()+",你背包剩余容量为:"+(player.getMaxBearWeight()-player.getNowWeight())+"kg");
+                }else {
+                    System.out.println("你拿不动:"+item.getName()+" "+item.getWeight()+"kg"+" ，"+"而你容量只有:"+(player.getMaxBearWeight()-player.getNowWeight())+"kg");
+                }
+            }
+            return false;
+        });
+
+        //玩家的丢东西指令
+        table.put(CommandWord.DROP,command -> {
+            if(!command.hasSecondWord()) {
+                // if there is no second word, we don't know take what...
+                System.out.println("Drop what?");
+                return false;
+            }
+            //获取物品名称
+            String name = command.getSecondWord();
+            //查询这个物品是否在玩家身上
+            Item item = player.getItem(name);
+            if(item==null){
+                System.out.println("你身上没那个东西！！！");
+            }else {
+                player.dropItem(item);
+                System.out.println("你成功丢掉了"+item.getName()+",你背包剩余容量为:"+(player.getMaxBearWeight()-player.getNowWeight())+"kg");
+                System.out.println(player.showItems());
+            }
+            return false;
+        });
+```
+&emsp;&emsp;(4)游戏中增加一个新命令“Items”，打印所有物品信息。
 ### 5.编写测试用例<span id=5/>
 
 

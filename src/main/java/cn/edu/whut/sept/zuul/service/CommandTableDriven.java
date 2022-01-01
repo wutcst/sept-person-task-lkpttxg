@@ -1,5 +1,7 @@
 package cn.edu.whut.sept.zuul.service;
 
+import cn.edu.whut.sept.zuul.entity.Item;
+import cn.edu.whut.sept.zuul.entity.Player;
 import cn.edu.whut.sept.zuul.enums.CommandWord;
 import cn.edu.whut.sept.zuul.moudle.Game;
 import cn.edu.whut.sept.zuul.entity.Command;
@@ -23,6 +25,7 @@ public class CommandTableDriven {
      */
     private final HashMap<CommandWord, Function<Command,Boolean>> table;
     private final Game game;
+    private final Player player;
 
     /**
      * 当表驱动对象初始化后，将<code>Game</code>中的处理业务进行一一对应，其函数的注册是用的lambda表达式<br>
@@ -31,9 +34,11 @@ public class CommandTableDriven {
      * 退出游戏。
      * @param game 游戏主体
      */
-    public CommandTableDriven(Game game){
+    public CommandTableDriven(Game game,Player player){
         //初始化 game
         this.game=game;
+        //初始化 player
+        this.player=player;
         //初始化驱动表
         table=new HashMap<>();
 
@@ -48,7 +53,7 @@ public class CommandTableDriven {
             String direction = command.getSecondWord();
 
             // Try to leave current room.
-            Room nextRoom = game.getCurrentRoom().getExit(direction);
+            Room nextRoom = player.getCurrentRoom().getExit(direction);
 
             if (nextRoom == null) {
                 System.out.println("There is no door!");
@@ -66,16 +71,16 @@ public class CommandTableDriven {
                     int i =(int)(Math.random()*rooms.size());
                     nextRoom = rooms.get(i);
                     //保证房间不相同
-                    while(nextRoom == game.getCurrentRoom()){
+                    while(nextRoom == player.getCurrentRoom()){
                         i =(int)(Math.random()*rooms.size());
                         nextRoom = rooms.get(i);
                     }
 
                 }
                 //进入了另一个房间，将上一个房间入栈
-                game.getBacks().push(game.getCurrentRoom());
-                game.setCurrentRoom(nextRoom);
-                System.out.println(game.getCurrentRoom().getLongDescription());
+                player.getRoom_history().push(player.getCurrentRoom());
+                player.setCurrentRoom(nextRoom);
+                System.out.println(player.getCurrentRoom().getLongDescription());
             }
             return false;
         });
@@ -102,20 +107,67 @@ public class CommandTableDriven {
 
         // look 指令对应的功能，查看房间信息
         table.put(CommandWord.LOOK,command -> {
-            System.out.println(game.getCurrentRoom().getLongDescription());return false;});
+            System.out.println(player.getCurrentRoom().getLongDescription());return false;});
 
         /* back 指令对应的功能，回退到上一个房间
         如果栈顶为空，则表示已经在起点；
         否则，pop 出栈顶作为当前房间，输出描述信息
          */
         table.put(CommandWord.BACK,command -> {
-            Stack<Room> stack = game.getBacks();
+            Stack<Room> stack = player.getRoom_history();
             //对栈顶元素进行判断
             if(stack.size()!=0){
-                game.setCurrentRoom(stack.pop());
-                System.out.println(game.getCurrentRoom().getLongDescription());
+                player.setCurrentRoom(stack.pop());
+                System.out.println(player.getCurrentRoom().getLongDescription());
             }else{
                 System.out.println("这已经是起点了...");
+            }
+            return false;
+        });
+
+        //玩家的拿东西指令
+        table.put(CommandWord.TAKE,command -> {
+            if(!command.hasSecondWord()) {
+                // if there is no second word, we don't know take what...
+                System.out.println("Take what?");
+                return false;
+            }
+            //获取物品名称
+            String name = command.getSecondWord();
+            //查询是否有这个物品在房间中
+            Item item = player.getCurrentRoom().getItem(name);
+            if(item==null){
+                System.out.println("这个房间没那个东西");
+            }else {
+                //player拿东西
+                //先判断是否拿的动
+                if(player.addItem(item)){
+                    player.getCurrentRoom().getItems().remove(item);
+                    System.out.println("你成功拿起了"+item.getName()+",你背包剩余容量为:"+(player.getMaxBearWeight()-player.getNowWeight())+"kg");
+                }else {
+                    System.out.println("你拿不动:"+item.getName()+" "+item.getWeight()+"kg"+" ，"+"而你容量只有:"+(player.getMaxBearWeight()-player.getNowWeight())+"kg");
+                }
+            }
+            return false;
+        });
+
+        //玩家的丢东西指令
+        table.put(CommandWord.DROP,command -> {
+            if(!command.hasSecondWord()) {
+                // if there is no second word, we don't know take what...
+                System.out.println("Drop what?");
+                return false;
+            }
+            //获取物品名称
+            String name = command.getSecondWord();
+            //查询这个物品是否在玩家身上
+            Item item = player.getItem(name);
+            if(item==null){
+                System.out.println("你身上没那个东西！！！");
+            }else {
+                player.dropItem(item);
+                System.out.println("你成功丢掉了"+item.getName()+",你背包剩余容量为:"+(player.getMaxBearWeight()-player.getNowWeight())+"kg");
+                System.out.println(player.showItems());
             }
             return false;
         });

@@ -6,6 +6,7 @@ package cn.edu.whut.sept.zuul.entity;
  * @version 2021.12.31
  */
 public class Item {
+    private String name;
     private String description;
     private float weight;
 
@@ -14,11 +15,29 @@ public class Item {
      * @param description 物体的描述
      * @param weight 物体的重量
      */
-    public Item(String description, float weight) {
+    public Item(String name,String description, float weight) {
+        this.name=name;
         this.description = description;
         this.weight = weight;
     }
 
+    /**
+     * 获取物体的长描述：name + 描述 + 重量.
+     *
+     * @return 返回长描述字符串
+     */
+    public String getLongDescription(){
+        return name+"\t"+description+"\t"+weight;
+    }
+
+    /**
+     * 获取物体的短描述：name + 重量.
+     *
+     * @return 返回短描述字符串
+     */
+    public String getShortDescription(){
+        return name+"\t"+weight;
+    }
     /**
      * setter方法，获得这个物品的描述
      * @return
@@ -40,5 +59,13 @@ public class Item {
 
     public void setWeight(float weight) {
         this.weight = weight;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

@@ -56,9 +56,38 @@ public class Player {
     public boolean isOver(Item item){
         return maxBearWeight<item.getWeight()+nowWeight;
     }
-    /*
-    以下都是 setter 和 getter 方法
+   public Item getItem(String name){
+       for(Item item:items){
+           if(item.getName().equals(name)){
+               return item;
+           }
+       }
+       return null;
+   }
+
+    /**
+     * 丢弃player身上的物品
+     * @param item 丢弃物品
      */
+   public void dropItem(Item item){
+        items.remove(item);
+        nowWeight-=item.getWeight();
+   }
+
+    /**
+     * 展示Player身上所有的物品
+     * @return 返回展示字符串
+     */
+   public String showItems(){
+       if(items.isEmpty()){
+           return "你身上啥都没有"+'\n';
+       }
+       StringBuilder s = new StringBuilder("");
+       for(Item item:items){
+           s.append(item.getName()+"\t"+item.getWeight()+"kg"+"\n");
+       }
+       return "你身上有:\n"+s.toString();
+   }
     public String getName() {
         return name;
     }
@@ -71,16 +100,8 @@ public class Player {
         return maxBearWeight;
     }
 
-    public void setMaxBearWeight(float maxBearWeight) {
-        this.maxBearWeight = maxBearWeight;
-    }
-
     public Set<Item> getItems() {
         return items;
-    }
-
-    public void setItems(Set<Item> items) {
-        this.items = items;
     }
 
     public Room getCurrentRoom() {
@@ -97,5 +118,9 @@ public class Player {
 
     public void setRoom_history(Stack<Room> room_history) {
         this.room_history = room_history;
+    }
+
+    public float getNowWeight() {
+        return nowWeight;
     }
 }

@@ -68,7 +68,7 @@ public class Room
         }
         StringBuilder s = new StringBuilder("");
         for(Item item:items){
-            s.append(item.getDescription()+"\t"+item.getWeight()+"kg"+"\n");
+            s.append(item.getName()+"\t"+item.getDescription()+"\t"+item.getWeight()+"kg"+"\n");
         }
         return "仔细观察这个房间:\n"+s.toString();
     }
@@ -97,7 +97,14 @@ public class Room
     {
         return exits.get(direction);
     }
-
+    public Item getItem(String name){
+        for(Item item:items){
+            if(item.getName().equals(name)){
+                return item;
+            }
+        }
+        return null;
+    }
     /**
      * 向房间中增加一个物品
      * @param item 物品对象
@@ -124,6 +131,10 @@ public class Room
 
     public void setTransferPoint(boolean transferPoint) {
         isTransferPoint = transferPoint;
+    }
+
+    public HashSet<Item> getItems() {
+        return items;
     }
 }
 

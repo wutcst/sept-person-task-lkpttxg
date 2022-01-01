@@ -9,7 +9,8 @@ public enum CommandWord {
     //将命令字符串与枚举类型关联起来
     GO("go"),QUIT("quit"),
     HELP("help"),LOOK("look"),
-    BACK("back"),UNKNOWN("?");
+    BACK("back"),UNKNOWN("?"),
+    TAKE("take"),DROP("drop");
 
     private String commandString;
 
