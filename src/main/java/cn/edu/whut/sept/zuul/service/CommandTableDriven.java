@@ -207,6 +207,12 @@ public class CommandTableDriven {
             }
             return false;
         });
+        //展示玩家具体信息
+        table.put(CommandWord.INFO,command -> {
+            System.out.println("你仔细的审查者自己：");
+            System.out.println(player.getSelfLongDescription());
+           return false;
+        });
     }
 
     /**

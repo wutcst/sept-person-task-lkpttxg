@@ -1,5 +1,13 @@
 # 软工实训任务报告
 
+#### [目录]()
+#### [1.阅读和描述样例工程](#1)
+#### [&emsp;1.1 理解与描述样例工程功能](#2)
+#### [&emsp;1.2 UML类图描述代码结构组成](#3)
+#### [2.标注样例工程的代码](#4)
+#### [3.扩充和维护样例工程](#5)
+#### [4.功能扩充点](#4)
+#### [5.编写测试用例](#5)
 <hr>
 
 
@@ -76,7 +84,7 @@ classDiagram
 
 - 字段上的注释：多对复合字段的作用进行解释，以及用@see描述其相关方法
 ## 3.扩充和维护样例工程<span id=3/>
-### 3.1 解决隐形耦合
+### 3.1 解决隐形耦合(消除魔法值)
 &emsp;zuul游戏的用户界面是与英语的命令紧密绑定在一起的。假如希望改变界面使玩家可以使用其它语言，就需要找到源代码中所有命令字出现的地方，并加以修改，这是**隐形耦合**。
 &emsp;(1) 额外添加一个枚举类型CommandWord,来解决以上问题：
 ```java
@@ -150,6 +158,34 @@ public enum CommandWord {
                validCommands.put(commandWord.toString(),commandWord);
            }
        }
+    }
+```
+&emsp;(6) 之后对枚举类型再进行一个小扩展，使得用户在输入 help 后，可以看到更加详细的命令解释。我们将枚举类型的属性在扩展一个 description ，且生成一个 getter 方法，当展示所有命令时，除了输出原本的命令字符串，还输出这个 description 信息。enum 修改如下:
+```java
+public enum CommandWord {
+    //将命令字符串与枚举类型关联起来
+    GO("go","前往一个地方"),QUIT("quit","退出游戏"),
+    HELP("help","获取帮助"),LOOK("look","仔细观察所处地方"),
+    BACK("back","回到上一个地方"),UNKNOWN("?",""),
+    TAKE("take","拿起东西"),DROP("drop","丢掉东西"),
+    ITEMS("items","展示所有物品"),EAT("eat","吃"),
+    INFO("info","展示玩家信息");
+
+    private String commandString;
+    private String description;
+
+```
+&emsp;展示所有命令指令方法修改如下:
+```java
+ /**
+     * 控制台打印所有的行为指令
+     */
+    public void showAll()
+    {
+        for(String s: validCommands.keySet()){
+            System.out.println(s+" "+validCommands.get(s).getDescription());
+        }
+        System.out.println();
     }
 ```
 ### 3.2 利用表驱动优化 if-else 语句
@@ -497,7 +533,7 @@ if(nextRoom.isTransferPoint()){
 - 因为房间只是充当一个秘密传送门，所以并没有存放物品
 
 ### &emsp;4.5 实现 Player 玩家类,玩家类的5个小功能
-&emsp;&emsp;(1)创建玩家类，属性字段通过考虑之后的扩展，有：姓名，最大承受重量，身上现有重量，身上所有物品，当前所处房间，历史房间:
+&emsp;&emsp;**(1)创建玩家类，属性字段通过考虑之后的扩展，有：姓名，最大承受重量，身上现有重量，身上所有物品，当前所处房间，历史房间:**
 ```java
 public class Player {
     private String name;
@@ -522,7 +558,7 @@ public class Player {
         room_history=new Stack<>();
     }
 ```
-&emsp;&emsp;(2)在第(1)步，我们可以将 Game 类中的属性 currentName 转移到玩家类中，因为有了玩家类，当前房间更像是玩家的信息，并且历史房间的存储应该也是针对玩家的。所以以上算是对系统的一次重构。接下来，在 Player 中实现方法使玩家对象可以添加物品，判断可携带物品是否超过重量上限。
+&emsp;&emsp;**(2)在第(1)步，我们可以将 Game 类中的属性 currentName 转移到玩家类中，因为有了玩家类，当前房间更像是玩家的信息，并且历史房间的存储应该也是针对玩家的。所以以上算是对系统的一次重构。接下来，在 Player 中实现方法使玩家对象可以添加物品，判断可携带物品是否超过重量上限。**
 ```java
  /**
      * 添加物品
@@ -554,7 +590,7 @@ public class Player {
         return maxBearWeight<item.getWeight()+nowWeight;
     }
 ```
-&emsp;&emsp;(3)实现 take 和 drop 命令。首先我们将 Player 玩家对象在 Game 中创建，对表驱动中的功能方法进行重构之后的修改。修改如下：
+&emsp;&emsp;**(3)实现 take 和 drop 命令。首先我们将 Player 玩家对象在 Game 中创建，对表驱动中的功能方法进行重构之后的修改。修改如下：**
 ```java
  /**
      * 目前只有一个玩家，所有并没有用集合存储
@@ -660,7 +696,7 @@ public class CommandTableDriven {
             return false;
         });
 ```
-&emsp;&emsp;(4)游戏中增加一个新命令“Items”，打印所有物品信息。如果房间无物品，则打印房间什么都没有，如果人物没物品，则打印你身上什么也没有。
+&emsp;&emsp;**(4)游戏中增加一个新命令“Items”，打印所有物品信息。如果房间无物品，则打印房间什么都没有，如果人物没物品，则打印你身上什么也没有。**
 ```java
  //展示所有物品信息
         table.put(CommandWord.ITEMS,command -> {
@@ -669,7 +705,7 @@ public class CommandTableDriven {
             return false;
         });
 ```
-&emsp;&emsp;(5)随机在房间中生成魔法饼干，用户执行“eat cookie”命令，吃掉后可增加负重。
+&emsp;&emsp;**(5)随机在房间中生成魔法饼干，用户执行“eat cookie”命令，吃掉后可增加负重。**
 ```java
 /**
      * 随机给一个非传送房间加入魔法饼干
@@ -681,7 +717,66 @@ public class CommandTableDriven {
         rooms.get(i).addItem(new Item("魔法饼干","有魔力一般，能让你更耐受",0.1f));
     }
 ```
-&emsp;&emsp;在添加完魔法饼干后，在表驱动类中实现 eat magic 的功能。
+&emsp;&emsp;在添加完魔法饼干后，在表驱动类中实现 eat magic 的功能。具体代码如下：
+```java
+//玩家执行吃magic cookie
+table.put(CommandWord.EAT,command -> {
+    if(!command.hasSecondWord()) {
+        // if there is no second word, we don't know eat what...
+        System.out.println("EAT what?");
+        return false;
+    }
+    //获取物品名称
+    String name = command.getSecondWord();
+    //查询是否有这个物品在房间中
+    Item item = player.getCurrentRoom().getItem(name);
+    if(item==null){
+        System.out.println("这个房间没有这个东西");
+    }else {
+        if(item.getName().equals("魔法饼干")){
+            //玩家增加耐受容量+20kg
+            player.setMaxBearWeight(player.getMaxBearWeight()+20);
+            System.out.println("你吃了这个魔法饼干，感觉力大无穷，神清气爽，耐受+20kg"+"你现在的容量为："+player.getMaxBearWeight()+"kg");
+            //把魔法饼干从房间移除
+            player.getCurrentRoom().getItems().remove(item);
+        }else {
+            System.out.println("这个东西不能吃！！！");
+        }
+    }
+    return false;
+});
+```
+### &emsp;4.6 控制台展示玩家所有信息 'info'
+&emsp;&emsp;当游戏玩家想时时了解自己的状态时，我们提供 "info" 命令使玩家可以了解自身信息
+```java
+ /**
+     * 完整的描述自己
+     * @return 返回描述字段
+     */
+   public String getSelfLongDescription(){
+       return "姓名："+name+"\n"
+               + "最大耐受量:"+maxBearWeight+"kg"+"\n"
+               +"目前耐受量:"+nowWeight+"kg"+"\n"
+               +"剩余耐受量:"+(maxBearWeight-nowWeight)+"kg"+"\n"
+               +"目前所在："+getCurrentRoom().getShortDescription()+"\n"
+               +showItems();
+   }
+```
+&emsp;&emsp;表驱动类中，增加 info 的功能实现代码
+```java
+ //展示玩家具体信息
+        table.put(CommandWord.INFO,command -> {
+            System.out.println("你仔细的审查者自己：");
+            System.out.println(player.getSelfLongDescription());
+           return false;
+        });
+```
+### &emsp;4.7 额外增加向上和向下的房间移动
+&emsp;&emsp;玩家除了东南西北移动外，应该还可以上下移动，因为每个房间对应的出口及其房间信息是由 HashMap 表存储的，所以只要在初始化对房间添加 up 或者 down 的移动方向以及移动去往的房间就行。代码如下：
+```java
+ theater.setExit("up",forest);
+```
+
 ## 5.编写测试用例<span id=5/>
 
 

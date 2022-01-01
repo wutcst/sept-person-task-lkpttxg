@@ -22,7 +22,6 @@ import cn.edu.whut.sept.zuul.enums.CommandWord;
 import cn.edu.whut.sept.zuul.controller.Parser;
 
 import java.util.ArrayList;
-import java.util.Stack;
 
 /**
  * 该类是游戏的主体。它启动游戏，然后进入一个不断读取和执行输入的命令的循环.<br>
@@ -73,6 +72,7 @@ public class Game
     private void createRooms()
     {
         Room outside, theater, pub, lab, office,cave;
+        Room forest;
 
         // create the rooms
         outside = new Room("outside the main entrance of the university");
@@ -80,6 +80,8 @@ public class Game
         pub = new Room("in the campus pub");
         lab = new Room("in a computing lab");
         office = new Room("in the computing admin office");
+
+        forest=new Room("一个神秘的森林");
         //传输房间
         cave  = new Room("一个神秘的洞穴。你觉得很诡异，这时一股强光突然出现，你看不到任何东西，只知道自己好像身体不受支配，随意飘动...\n过来好一会，你才突然发现，你所处的早已不是洞穴，而是另一个地方");
         //将房间存入数组
@@ -94,6 +96,7 @@ public class Game
         outside.setExit("west", pub);
 
         theater.setExit("west", outside);
+        theater.setExit("up",forest);
 
         pub.setExit("east", outside);
 
@@ -161,15 +164,6 @@ public class Game
         }
         //获取命令枚举类型
         CommandWord commandWord = command.getCommandWord();
-       /* if (commandWord==CommandWord.HELP) {
-            printHelp();
-        }
-        else if (commandWord==CommandWord.GO) {
-            goRoom(command);
-        }
-        else if (commandWord==CommandWord.QUIT) {
-            wantToQuit = quit(command);
-        }*/
         //获取驱动表，执行该命令对应的函数，返回值赋予 wantToQuit
         wantToQuit=commandTableDriven.getTable().get(commandWord).apply(command);
         // else command not recognised.

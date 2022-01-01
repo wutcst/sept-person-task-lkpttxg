@@ -55,7 +55,7 @@ public class Room
      */
     public String getLongDescription()
     {
-        return "You are " + description + ".\n" + getItemsDescription()+getExitString();
+        return "你发现自己在 " + description + ".\n" + getItemsDescription()+getExitString();
     }
 
     /**
@@ -64,13 +64,13 @@ public class Room
      */
     public String getItemsDescription(){
         if(items.isEmpty()){
-            return "这个房间啥都没有"+'\n';
+            return "这个地方啥都没有"+'\n';
         }
         StringBuilder s = new StringBuilder("");
         for(Item item:items){
             s.append(item.getName()+"\t"+item.getDescription()+"\t"+item.getWeight()+"kg"+"\n");
         }
-        return "这个房间有:\n"+s.toString();
+        return "这个地方有:\n"+s.toString();
     }
 
     /**

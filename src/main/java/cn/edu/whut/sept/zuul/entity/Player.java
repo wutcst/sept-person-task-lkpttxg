@@ -88,6 +88,19 @@ public class Player {
        }
        return "你身上有:\n"+s.toString();
    }
+
+    /**
+     * 完整的描述自己
+     * @return 返回描述字段
+     */
+   public String getSelfLongDescription(){
+       return "姓名："+name+"\n"
+               + "最大耐受量:"+maxBearWeight+"kg"+"\n"
+               +"目前耐受量:"+nowWeight+"kg"+"\n"
+               +"剩余耐受量:"+(maxBearWeight-nowWeight)+"kg"+"\n"
+               +"目前所在："+getCurrentRoom().getShortDescription()+"\n"
+               +showItems();
+   }
     public String getName() {
         return name;
     }
