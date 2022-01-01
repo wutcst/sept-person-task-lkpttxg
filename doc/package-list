@@ -1,1 +1,6 @@
 cn.edu.whut.sept.zuul
+cn.edu.whut.sept.zuul.controller
+cn.edu.whut.sept.zuul.entity
+cn.edu.whut.sept.zuul.enums
+cn.edu.whut.sept.zuul.moudle
+cn.edu.whut.sept.zuul.service

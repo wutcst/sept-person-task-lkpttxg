@@ -60,8 +60,4 @@ public class Command {
     public boolean hasSecondWord() {
         return (secondWord != null);
     }
-
-    public void setSecondWord(String secondWord) {
-        this.secondWord = secondWord;
-    }
 }

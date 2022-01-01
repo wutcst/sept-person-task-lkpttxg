@@ -16,91 +16,107 @@ public class Player {
     private float nowWeight;
     private Set<Item> items;
     private Room currentRoom;
-    private Stack<Room> room_history;
+    private Stack<Room> roomHistory;
 
     /**
      * 构造方法，实例化玩家类.
      *
      * @param name 玩家信息
      * @param maxBearWeight 玩家最大承受重量
+     * @param nowWeight 玩家现在的承受重量
      */
-    public Player(String name, float maxBearWeight,float nowWeight) {
+    public Player(String name, float maxBearWeight, float nowWeight) {
         this.name = name;
         this.maxBearWeight = maxBearWeight;
-        this.nowWeight=nowWeight;
+        this.nowWeight = nowWeight;
         //初始化集合
-        items=new HashSet<>();
-        room_history=new Stack<>();
+        items = new HashSet<>();
+        roomHistory = new Stack<>();
     }
 
 
     /**
-     * 添加物品
+     * 添加物品.
+     *
      * @param item 物品对象
      * @return 可以添加为 true,不能添加为 flase
      */
-    public boolean addItem(Item item){
-        if(!isOver(item)){
+    public boolean addItem(Item item) {
+        if (!isOver(item)) {
             items.add(item);
-            nowWeight+=item.getWeight();
+            nowWeight += item.getWeight();
             return true;
         }
         return false;
     }
 
     /**
-     * 判断加入某个物体后是否超重
+     * 判断加入某个物体后是否超重.
+     *
      * @param item 物体对象
      * @return 超重为true，否则为flase
      */
-    public boolean isOver(Item item){
-        return maxBearWeight<item.getWeight()+nowWeight;
+    public boolean isOver(Item item) {
+        return maxBearWeight < item.getWeight() + nowWeight;
     }
-   public Item getItem(String name){
-       for(Item item:items){
-           if(item.getName().equals(name)){
+
+    /**
+     * 从玩家的物品列表中获取物品.
+     *
+     * @param name 物品名
+     * @return 如果物品存在，则返回该物品对象；否则返回 null
+     */
+    public Item getItem(String name) {
+       for (Item item : items) {
+           if (item.getName().equals(name)) {
                return item;
            }
        }
        return null;
-   }
+    }
 
     /**
-     * 丢弃player身上的物品
+     * 丢弃player身上的物品.
+     *
      * @param item 丢弃物品
      */
-   public void dropItem(Item item){
+   public void dropItem(Item item) {
         items.remove(item);
-        nowWeight-=item.getWeight();
+        nowWeight -= item.getWeight();
    }
 
     /**
-     * 展示Player身上所有的物品
+     * 展示Player身上所有的物品.
+     *
      * @return 返回展示字符串
      */
-   public String showItems(){
-       if(items.isEmpty()){
-           return "你身上啥都没有"+'\n';
+   public String showItems() {
+       if (items.isEmpty()) {
+           return "你身上啥都没有" + '\n';
        }
        StringBuilder s = new StringBuilder("");
-       for(Item item:items){
-           s.append(item.getName()+"\t"+item.getWeight()+"kg"+"\n");
+       for (Item item : items) {
+           s.append(item.getName() + "\t" + item.getWeight() + "kg" + "\n");
        }
-       return "你身上有:\n"+s.toString();
+       return "你身上有:\n" + s.toString();
    }
 
     /**
-     * 完整的描述自己
+     * 完整的描述自己.
+     *
      * @return 返回描述字段
      */
-   public String getSelfLongDescription(){
-       return "姓名："+name+"\n"
-               + "最大耐受量:"+maxBearWeight+"kg"+"\n"
-               +"目前耐受量:"+nowWeight+"kg"+"\n"
-               +"剩余耐受量:"+(maxBearWeight-nowWeight)+"kg"+"\n"
-               +"目前所在："+getCurrentRoom().getShortDescription()+"\n"
-               +showItems();
+   public String getSelfLongDescription() {
+       return "姓名：" + name + "\n"
+               + "最大耐受量:" + maxBearWeight + "kg" + "\n"
+               + "目前耐受量:" + nowWeight + "kg" + "\n"
+               + "剩余耐受量:" + (maxBearWeight - nowWeight) + "kg" + "\n"
+               + "目前所在：" + getCurrentRoom().getShortDescription() + "\n"
+               + showItems();
    }
+
+    //以下都是对属性字段的 getter 和 setter 方法
+
     public String getName() {
         return name;
     }
@@ -125,12 +141,8 @@ public class Player {
         this.currentRoom = currentRoom;
     }
 
-    public Stack<Room> getRoom_history() {
-        return room_history;
-    }
-
-    public void setRoom_history(Stack<Room> room_history) {
-        this.room_history = room_history;
+    public Stack<Room> getRoomHistory() {
+        return roomHistory;
     }
 
     public float getNowWeight() {
