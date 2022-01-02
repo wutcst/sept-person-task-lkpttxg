@@ -47,9 +47,8 @@ public class PlayerTest extends TestCase {
         Item item1 = new Item("石头","一块石头",10);
         player.addItem(item);
         player.addItem(item1);
-        String s = "你身上有:\n"
-                + "大石头" + "\t"+"50.0kg\n"
-                + "石头" + "\t"+"10.0kg\n";
+        String s = "你身上有:\n石头\t10.0kg\n" +
+                "大石头\t50.0kg\n";
         //正确
         assertEquals(s,player.showItems());
     }

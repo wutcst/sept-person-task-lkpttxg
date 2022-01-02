@@ -784,6 +784,32 @@ table.put(CommandWord.EAT,command -> {
 ### 5.1 枚举类型 CommandWord 测试
 &emsp;新增的枚举类型 CommandWord 一共有两个功能：(1) 将命令字符串以重写的 toString 方法返回；(2) getter 方法，获得该命令字符串的具体描述，帮助玩家理解行为指令。具体测试如下：
 ```java
+import junit.framework.TestCase;
+import org.junit.Test;
+
+public class CommandWordTest extends TestCase {
+    CommandWord commandWord = CommandWord.GO;
+    @Test
+    public void testTestToString() {
+        //应该为“go”，不为“go”则判断为false
+        assertEquals( "go", commandWord.toString());
+
+    }
+    @Test
+    public void testGetDescription() {
+        //应该为“前往一个地方”，不为“前往一个地方”则判断为false
+        assertEquals("前往一个地方", commandWord.getDescription());
+    }
+
+}
+
+```
+&emsp;上述方法的单元测试均通过。
+
+### 5.2 CommandWords 类测试
+&emsp;CommandWords 中存放的正是玩家执行的指令组，因为以前存放的都是魔法值，存在隐形耦合的问题，所以当我们加入枚举类型后，我们在 CommandWords 属性增加一个 HashMap 集合存放【命令字符串与枚举类型的键值对】。方便我们进行转换和判断。
+&emsp;CommandWords 中共有3个功能：(1)判断某个输入指令是否为游戏中可用的行为指令；(2)获得某个字符串对应的 CommandWord 枚举对象；(3) 控制台打印所有的行为指令。
+```java
 import cn.edu.whut.sept.zuul.enums.CommandWord;
 import junit.framework.TestCase;
 import org.junit.Test;
@@ -807,31 +833,6 @@ public class CommandWordsTest extends TestCase {
         //控制台输出正确，方法正确
         commandWords.showAll();
     }
-}
-```
-&emsp;上述方法的单元测试均通过。
-
-### 5.2 CommandWords 类测试
-&emsp;CommandWords 中存放的正是玩家执行的指令组，因为以前存放的都是魔法值，存在隐形耦合的问题，所以当我们加入枚举类型后，我们在 CommandWords 属性增加一个 HashMap 集合存放【命令字符串与枚举类型的键值对】。方便我们进行转换和判断。
-&emsp;CommandWords 中共有3个功能：(1)判断某个输入指令是否为游戏中可用的行为指令；(2)获得某个字符串对应的 CommandWord 枚举对象；(3) 控制台打印所有的行为指令。
-```java
-import junit.framework.TestCase;
-import org.junit.Test;
-
-public class CommandWordTest extends TestCase {
-    CommandWord commandWord = CommandWord.GO;
-    @Test
-    public void testTestToString() {
-        //应该为“go”，不为“go”则判断为false
-        assertEquals( "go", commandWord.toString());
-
-    }
-    @Test
-    public void testGetDescription() {
-        //应该为“前往一个地方”，不为“前往一个地方”则判断为false
-        assertEquals("前往一个地方", commandWord.getDescription());
-    }
-
 }
 ```
 &emsp;上述方法的单元测试均通过。
