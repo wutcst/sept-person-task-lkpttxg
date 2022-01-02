@@ -28,7 +28,7 @@ public class PlayerTest extends TestCase {
         Player player = new Player("TXG", 100, 0);
         Item item = new Item("石头","一块石头",50);
         player.addItem(item);
-        //可用找到，测试成功
+        //可以找到，测试成功
         assertEquals(item,player.getItem("石头"));
     }
     @Test

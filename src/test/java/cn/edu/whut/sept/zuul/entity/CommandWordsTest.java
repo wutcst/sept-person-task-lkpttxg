@@ -8,7 +8,7 @@ public class CommandWordsTest extends TestCase {
     CommandWords commandWords = new CommandWords();
     @Test
     public void testIsCommand() {
-        //输入help,判断help是否为可用的行为指令,help是可用指令,结果为true
+        //输入help,判断help是否为可用的行为指令,help为可用指令,结果为true
         assertEquals(true,commandWords.isCommand("help"));
         //输入goo,为无用的行为指令，结果为false
         assertEquals(false,commandWords.isCommand("goo"));

@@ -13,7 +13,7 @@ public class CommandWordTest extends TestCase {
     }
     @Test
     public void testGetDescription() {
-        //应该为“前往一个地方”，不为“前往一个地方”则判断为false
+        //应该为“前往一个地方”，不为“前往一个地方”则判断false
         assertEquals("前往一个地方", commandWord.getDescription());
     }
 

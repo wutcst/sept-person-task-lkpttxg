@@ -135,8 +135,8 @@ public class CommandTableDrivenTest extends TestCase {
         //给房间添加魔法饼干
         game.getPlayer().getCurrentRoom().addItem(new Item("魔法饼干","1",1));
         commandTableDriven.getTable().get(CommandWord.EAT).apply(command);
-        //正确输入如下：
-        //你吃了这个魔法饼干，感觉力大无穷，神清气爽，耐受+20kg你现在的容量为：70.0kg
+        //正确输入如下:
+        //你吃了这个魔法饼干，感觉力大无穷，神清气爽，耐受+ 20kg你现在的容量为：70.0kg
     }
 
 }

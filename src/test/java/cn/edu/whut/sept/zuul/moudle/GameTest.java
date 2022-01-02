@@ -36,7 +36,7 @@ public class GameTest extends TestCase {
         //这个地方啥都没有
         //Exits: west up
 
-        //具体测试结果一致。即可用执行 Command 指令的执行
+        //具体测试结果一致 即可用执行 Command 指令的执行
     }
 
     /**

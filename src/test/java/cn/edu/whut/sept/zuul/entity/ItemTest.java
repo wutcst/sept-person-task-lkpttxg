@@ -20,7 +20,7 @@ public class ItemTest extends TestCase {
     @Test
     public void testGetWeight() {
         float f = 1.0f;
-        //测试应该正确
+        //测试正确
         assertEquals(f,item.getWeight());
 
     }
