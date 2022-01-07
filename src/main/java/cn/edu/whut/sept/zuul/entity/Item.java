@@ -1,5 +1,7 @@
 package cn.edu.whut.sept.zuul.entity;
 
+import java.util.Objects;
+
 /**
  * 该类表示一个物体.
  *
@@ -70,5 +72,20 @@ public class Item {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {return true;}
+        if (o == null || getClass() != o.getClass()) {return false;}
+        Item item = (Item) o;
+        return Float.compare(item.weight, weight) == 0 &&
+                Objects.equals(name, item.name) &&
+                Objects.equals(description, item.description);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, description, weight);
     }
 }

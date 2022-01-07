@@ -2,6 +2,7 @@ package cn.edu.whut.sept.zuul.entity;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -147,6 +148,22 @@ public class Room {
 
     public HashSet<Item> getItems() {
         return items;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {return true;}
+        if (o == null || getClass() != o.getClass()) {return false;}
+        Room room = (Room) o;
+        return isTransferPoint == room.isTransferPoint &&
+                Objects.equals(description, room.description) &&
+                Objects.equals(exits, room.exits) &&
+                Objects.equals(items, room.items);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(description, isTransferPoint, exits, items);
     }
 }
 

@@ -1,6 +1,7 @@
 package cn.edu.whut.sept.zuul.entity;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 import java.util.Stack;
 
@@ -153,4 +154,21 @@ public class Player {
         this.maxBearWeight = maxBearWeight;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {return true;}
+        if (o == null || getClass() != o.getClass()) {return false;}
+        Player player = (Player) o;
+        return Float.compare(player.maxBearWeight, maxBearWeight) == 0 &&
+                Float.compare(player.nowWeight, nowWeight) == 0 &&
+                Objects.equals(name, player.name) &&
+                Objects.equals(items, player.items) &&
+                Objects.equals(currentRoom, player.currentRoom) &&
+                Objects.equals(roomHistory, player.roomHistory);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, maxBearWeight, nowWeight, items, currentRoom, roomHistory);
+    }
 }

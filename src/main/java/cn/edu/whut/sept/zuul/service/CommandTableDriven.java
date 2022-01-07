@@ -183,6 +183,7 @@ public class CommandTableDriven {
 
         //玩家执行吃magic cookie
         table.put(CommandWord.EAT, command -> {
+            String magicCookie = "魔法饼干";
             if (!command.hasSecondWord()) {
                 // if there is no second word, we don't know eat what...
                 System.out.println("EAT what?");
@@ -195,7 +196,7 @@ public class CommandTableDriven {
             if (item == null) {
                 System.out.println("这个房间没有这个东西");
             } else {
-                if (item.getName().equals("魔法饼干")) {
+                if (magicCookie.equals(item.getName())) {
                     //玩家增加耐受容量+20kg
                     player.setMaxBearWeight(player.getMaxBearWeight() + 20);
                     System.out.println("你吃了这个魔法饼干，感觉力大无穷，神清气爽，耐受+20kg"

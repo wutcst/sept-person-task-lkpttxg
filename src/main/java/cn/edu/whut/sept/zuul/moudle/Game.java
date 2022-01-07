@@ -105,6 +105,9 @@ public class Game {
         //创建物品
         outside.addItem(new Item("大石头", "一块奇怪的大石头", 60));
         outside.addItem(new Item("画", "一副奇怪的画，但看不懂画的是什么", 0.2f));
+        lab.addItem(new Item("苹果","一个红色的苹果",0.1f));
+        lab.addItem(new Item("香蕉","普通的香蕉",0.05f));
+        lab.addItem(new Item("苹果手机","Apple手机",0.2f));
         //随机放入一个魔法饼干到房间中
         addCookie();
         // start game outside
