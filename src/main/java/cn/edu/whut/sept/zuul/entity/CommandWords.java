@@ -30,13 +30,13 @@ public class CommandWords {
     /**
      * 判断某个输入的指令是否为游戏中可用的行为指令.
      *
-     *@param aString 传入的指令
+     *@param commandString 传入的指令
      * @return 如果是游戏行为指令，返回<code>true</code>,否则返回<code>false</code>
      */
-    public boolean isCommand(String aString) {
+    public boolean isCommand(String commandString) {
         //循环检测
         for (String s : validCommands.keySet()) {
-            if (s.equals(aString)) {
+            if (s.equals(commandString)) {
                 return true;
             }
         }

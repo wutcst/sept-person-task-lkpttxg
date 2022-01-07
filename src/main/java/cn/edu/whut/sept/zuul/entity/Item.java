@@ -31,7 +31,7 @@ public class Item {
      *
      *@return 返回长描述字符串
      */
-    public String getLongDescription(){
+    public String getLongDescription() {
         return name + "\t" + description + "\t" + weight;
     }
 
@@ -48,6 +48,7 @@ public class Item {
      *
      *@return 返回物品描述
      */
+
     public String getDescription() {
         return this.description;
     }
@@ -76,8 +77,8 @@ public class Item {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) {return true;}
-        if (o == null || getClass() != o.getClass()) {return false;}
+        if (this == o) { return true; }
+        if (o == null || getClass() != o.getClass()) { return false; }
         Item item = (Item) o;
         return Float.compare(item.weight, weight) == 0 &&
                 Objects.equals(name, item.name) &&
